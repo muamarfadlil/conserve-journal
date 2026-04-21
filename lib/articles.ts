@@ -1,108 +1,129 @@
-// ============================================================
 // lib/articles.ts
-// Tipe data dan fungsi utilitas untuk mengelola data artikel jurnal.
-// Dengan pendekatan ini, jika suatu saat data dipindah ke database,
-// kita hanya perlu mengubah file ini saja tanpa menyentuh halaman-halaman.
+// Fungsi-fungsi ini sekarang mengambil data dari PostgreSQL via Prisma.
+// Semua fungsi menjadi async karena operasi database bersifat asinkron.
+
+import { prisma } from './prisma'
+
+// ============================================================
+// TIPE DATA — disesuaikan dengan struktur database
 // ============================================================
 
-import articlesData from "@/data/articles.json";
-
-// === TIPE DATA UTAMA ===
-// Mendefinisikan "bentuk" dari setiap objek artikel
-export interface Article {
-  id: string;
-  title: string;
-  authors: string[];
-  abstract: string;
-  pages: string;
-  publishedDate: string;         // Format: "YYYY-MM-DD"
-  volume: string;
-  number: string;
-  doi: string;
-  keywords: string[];
-  pdfUrl: string;
-  category: string;
+export type Author = {
+  id: number
+  name: string
+  affiliation: string | null
+  email: string | null
 }
 
-// Tipe untuk informasi edisi/volume jurnal
-export interface JournalIssue {
-  volume: string;
-  number: string;
-  publishedDate: string;
-  articles: Article[];
+export type Volume = {
+  id: number
+  number: number
+  issue: number
+  year: number
+  month: string | null
 }
 
-// === CAST DATA JSON KE TIPE TYPESCRIPT ===
-// TypeScript membutuhkan ini agar menjamin tipe data yang benar
-const articles: Article[] = articlesData as Article[];
+export type Article = {
+  id: number
+  title: string
+  abstract: string
+  pages: string | null
+  doi: string | null
+  pdfUrl: string | null
+  category: string | null
+  keywords: string[]
+  publishedAt: Date | null
+  volumeId: number
+  createdAt: Date
+  volume: Volume
+  authors: Author[]
+}
 
-// === FUNGSI UTILITAS ===
+export type LatestIssue = {
+  volume: number
+  issue: number
+  year: number
+  month: string | null
+  articles: Article[]
+}
+
+// ============================================================
+// FUNGSI UTILITAS
+// ============================================================
 
 /**
- * Mengambil semua artikel dari data.
- * Di masa depan, ini bisa diganti dengan fetch() ke API atau database.
+ * Mengambil semua artikel beserta data volume dan penulisnya.
  */
-export function getAllArticles(): Article[] {
-  return articles;
-}
-
-/**
- * Mencari satu artikel berdasarkan ID-nya.
- * Mengembalikan `undefined` jika artikel tidak ditemukan.
- */
-export function getArticleById(id: string): Article | undefined {
-  return articles.find((article) => article.id === id);
-}
-
-/**
- * Mengambil artikel-artikel untuk edisi (volume + nomor) tertentu.
- */
-export function getArticlesByIssue(volume: string, number: string): Article[] {
-  return articles.filter(
-    (article) => article.volume === volume && article.number === number
-  );
+export async function getAllArticles(): Promise<Article[]> {
+  return await prisma.article.findMany({
+    include: { volume: true, authors: true },
+    orderBy: { id: 'asc' }
+  })
 }
 
 /**
- * Mengambil informasi edisi terbaru (berdasarkan tanggal terbit terkini).
- * Fungsi ini secara otomatis menentukan edisi mana yang terbaru dari data.
+ * Mencari satu artikel berdasarkan ID-nya (sekarang ID bertipe number).
  */
-export function getLatestIssue(): JournalIssue {
-  // Urutkan artikel berdasarkan tanggal terbit (terbaru di depan)
-  const sorted = [...articles].sort(
-    (a, b) =>
-      new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
-  );
+export async function getArticleById(id: number): Promise<Article | null> {
+  return await prisma.article.findUnique({
+    where: { id },
+    include: { volume: true, authors: true }
+  })
+}
 
-  // Ambil volume dan nomor dari artikel paling baru
-  const latest = sorted[0];
-  const issueArticles = getArticlesByIssue(latest.volume, latest.number);
+/**
+ * Mengambil semua ID artikel — dibutuhkan oleh generateStaticParams.
+ * Mengembalikan string[] agar kompatibel dengan parameter URL Next.js.
+ */
+export async function getAllArticleIds(): Promise<string[]> {
+  const articles = await prisma.article.findMany({
+    select: { id: true }
+  })
+  return articles.map(a => String(a.id))
+}
+
+/**
+ * Mengambil volume terbaru beserta semua artikelnya.
+ */
+export async function getLatestIssue(): Promise<LatestIssue | null> {
+  const volume = await prisma.volume.findFirst({
+    orderBy: { year: 'desc' },
+    include: {
+      articles: {
+        include: { authors: true },
+        orderBy: { id: 'asc' }
+      }
+    }
+  })
+
+  if (!volume) return null
 
   return {
-    volume: latest.volume,
-    number: latest.number,
-    publishedDate: latest.publishedDate,
-    articles: issueArticles,
-  };
+    volume: volume.number,
+    issue: volume.issue,
+    year: volume.year,
+    month: volume.month,
+    articles: volume.articles as Article[]
+  }
 }
 
 /**
- * Memformat tanggal dari "YYYY-MM-DD" menjadi format yang mudah dibaca,
- * misalnya: "11 February 2024"
+ * Memformat tanggal menjadi string yang mudah dibaca.
+ * Contoh output: "11 Februari 2024"
  */
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+export function formatDate(date: Date | string | null): string {
+  if (!date) return '-'
+  return new Date(date).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 }
 
 /**
- * Mengambil semua ID artikel — dibutuhkan oleh generateStaticParams
- * pada halaman dinamis [id] agar Next.js bisa melakukan pre-rendering.
+ * Memformat informasi volume menjadi string.
+ * Contoh output: "Februari 2024"
  */
-export function getAllArticleIds(): string[] {
-  return articles.map((article) => article.id);
+export function formatVolumeDate(volume: Volume): string {
+  return `${volume.month ?? ''} ${volume.year}`.trim()
 }

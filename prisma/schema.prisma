@@ -1,0 +1,56 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Prisma akan membaca DATABASE_URL dari file .env secara otomatis
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Tabel untuk menyimpan data Volume/Edisi jurnal
+// Contoh: Volume 1 Nomor 1, Tahun 2023
+model Volume {
+  id       Int       @id @default(autoincrement())
+  number   Int       // Nomor volume (1, 2, 3, ...)
+  issue    Int       // Nomor terbitan dalam volume (1, 2, ...)
+  year     Int       // Tahun terbit
+  month    String?   // Bulan terbit, opsional (misal: "Juni")
+  articles Article[] // Relasi: satu volume punya banyak artikel
+}
+
+// Tabel utama untuk menyimpan data artikel jurnal
+model Article {
+  id       Int     @id @default(autoincrement())
+  title    String  // Judul artikel
+  abstract String  @db.Text // @db.Text untuk teks panjang
+  doi      String? // DOI opsional (misal: 10.xxxxx/xxxxx)
+  pdfUrl   String? // Link ke file PDF
+  pages    String? // Halaman (misal: "1-15")
+  category    String?  // ← tambahkan ini
+  keywords    String[] // ← tambahkan ini (PostgreSQL mendukung array string)
+  publishedAt DateTime? // ← tambahkan ini
+
+  // Relasi ke tabel Volume
+  volume   Volume @relation(fields: [volumeId], references: [id])
+  volumeId Int
+
+  // Relasi ke tabel Author (many-to-many: satu artikel bisa punya banyak penulis)
+  authors  Author[]
+
+  createdAt DateTime @default(now())
+}
+
+// Tabel untuk menyimpan data penulis artikel
+model Author {
+  id          Int       @id @default(autoincrement())
+  name        String    // Nama lengkap penulis
+  affiliation String?   // Asal institusi/universitas
+  email       String?   // Email opsional
+
+  // Relasi balik ke Article
+  articles    Article[]
+}
