@@ -9,10 +9,16 @@ interface ArticlePageProps {
   params: { id: string };
 }
 
-// generateStaticParams sekarang async karena getAllArticleIds() async
+// Render dinamis — agar tetap berfungsi meski DB tidak tersedia saat build
+export const dynamic = "force-dynamic"
+
 export async function generateStaticParams() {
-  const ids = await getAllArticleIds()
-  return ids.map((id) => ({ id }))
+  try {
+    const ids = await getAllArticleIds()
+    return ids.map((id) => ({ id }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {

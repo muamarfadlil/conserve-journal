@@ -90,7 +90,7 @@ export async function getLatestIssue(): Promise<LatestIssue | null> {
     orderBy: { year: 'desc' },
     include: {
       articles: {
-        include: { authors: true },
+        include: { authors: true, volume: true },
         orderBy: { id: 'asc' }
       }
     }
@@ -103,7 +103,7 @@ export async function getLatestIssue(): Promise<LatestIssue | null> {
     issue: volume.issue,
     year: volume.year,
     month: volume.month,
-    articles: volume.articles as Article[]
+    articles: volume.articles as unknown as Article[]
   }
 }
 
