@@ -1,4 +1,3 @@
-// app/dashboard/articles/page.tsx
 import type { Metadata } from "next"
 import { getSession, isAdmin } from "@/lib/auth"
 import { redirect } from "next/navigation"
@@ -20,27 +19,32 @@ export default async function ArticlesPage({
   const limit = 10
   const skip = (page - 1) * limit
 
-  const [articles, total] = await Promise.all([
-    prisma.article.findMany({
-      skip,
-      take: limit,
-      include: { volume: true, authors: true },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.article.count(),
-  ])
+  let articles: Awaited<ReturnType<typeof prisma.article.findMany<{ include: { volume: true; authors: true } }>>> = []
+  let total = 0
+  let volumes: Awaited<ReturnType<typeof prisma.volume.findMany>> = []
 
-  const volumes = await prisma.volume.findMany({ orderBy: { year: "desc" } })
+  try {
+    ;[articles, total, volumes] = await Promise.all([
+      prisma.article.findMany({
+        skip,
+        take: limit,
+        include: { volume: true, authors: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.article.count(),
+      prisma.volume.findMany({ orderBy: { year: "desc" } }),
+    ])
+  } catch (e) {
+    console.error("[articles page]", e)
+  }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-serif font-bold text-white">Kelola Artikel</h1>
-          <p className="text-ocean-400 text-sm mt-1">
-            Total <span className="text-white font-medium">{total}</span> artikel
-          </p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-serif font-bold text-white">Kelola Artikel</h1>
+        <p className="text-ocean-400 text-sm mt-1">
+          Total <span className="text-white font-medium">{total}</span> artikel
+        </p>
       </div>
 
       <ArticlesTable

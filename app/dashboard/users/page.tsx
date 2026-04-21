@@ -1,5 +1,3 @@
-// app/dashboard/users/page.tsx
-// Hanya SUPER_ADMIN yang dapat mengakses
 import type { Metadata } from "next"
 import { getSession, isSuperAdmin } from "@/lib/auth"
 import { redirect } from "next/navigation"
@@ -13,10 +11,16 @@ export default async function UsersPage() {
   const session = await getSession().catch(() => null)
   if (!isSuperAdmin(session?.user.role)) redirect("/dashboard")
 
-  const users = await prisma.user.findMany({
-    select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true },
-    orderBy: { createdAt: "desc" },
-  })
+  let users: { id: string; name: string; email: string; role: string; isActive: boolean; createdAt: Date }[] = []
+
+  try {
+    users = await prisma.user.findMany({
+      select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    })
+  } catch (e) {
+    console.error("[users page]", e)
+  }
 
   return (
     <div className="space-y-6">
@@ -26,7 +30,7 @@ export default async function UsersPage() {
           Total <span className="text-white font-medium">{users.length}</span> pengguna terdaftar
         </p>
       </div>
-      <UsersTable users={users} currentUserId={session!.user.id} />
+      <UsersTable users={users} currentUserId={session?.user.id ?? ""} />
     </div>
   )
 }

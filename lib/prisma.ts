@@ -1,7 +1,3 @@
-// lib/prisma.ts
-// Singleton pattern: mencegah terlalu banyak koneksi database
-// terbuka saat Next.js melakukan hot-reload di development
-
 import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = globalThis as unknown as {
@@ -10,8 +6,11 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient()
+  new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  })
 
+// Di production (Vercel serverless), JANGAN cache — tiap invokasi fresh
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma
 }
