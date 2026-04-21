@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs"
 import { z } from "zod"
 
 async function requireSuperAdmin() {
-  const session = await getSession()
+  const session = await getSession().catch(() => null)
   if (!session || !isSuperAdmin(session.user.role)) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 })
   }

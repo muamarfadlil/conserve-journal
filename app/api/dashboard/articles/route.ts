@@ -6,7 +6,7 @@ import { getSession, isAdmin } from "@/lib/auth"
 import { z } from "zod"
 
 async function requireAdmin() {
-  const session = await getSession()
+  const session = await getSession().catch(() => null)
   if (!session || !isAdmin(session.user.role)) {
     return NextResponse.json({ error: "Akses ditolak" }, { status: 403 })
   }

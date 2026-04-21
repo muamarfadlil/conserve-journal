@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import ArticlesTable from "@/components/dashboard/ArticlesTable"
 
+export const dynamic = "force-dynamic"
 export const metadata: Metadata = { title: "Kelola Artikel" }
 
 export default async function ArticlesPage({
@@ -12,7 +13,7 @@ export default async function ArticlesPage({
 }: {
   searchParams: { page?: string }
 }) {
-  const session = await getSession()
+  const session = await getSession().catch(() => null)
   if (!isAdmin(session?.user.role)) redirect("/dashboard")
 
   const page = Math.max(1, parseInt(searchParams.page ?? "1"))

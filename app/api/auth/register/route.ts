@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     // Hanya ADMIN/SUPER_ADMIN yang bisa membuat akun ADMIN/SUPER_ADMIN
     if (role !== "USER") {
-      const session = await getSession()
+      const session = await getSession().catch(() => null)
       if (!session || !isAdmin(session.user.role)) {
         return NextResponse.json(
           { error: "Tidak memiliki izin untuk membuat akun dengan peran ini" },

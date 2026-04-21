@@ -6,10 +6,11 @@ import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import UsersTable from "@/components/dashboard/UsersTable"
 
+export const dynamic = "force-dynamic"
 export const metadata: Metadata = { title: "Kelola Pengguna" }
 
 export default async function UsersPage() {
-  const session = await getSession()
+  const session = await getSession().catch(() => null)
   if (!isSuperAdmin(session?.user.role)) redirect("/dashboard")
 
   const users = await prisma.user.findMany({

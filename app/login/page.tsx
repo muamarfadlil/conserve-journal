@@ -14,7 +14,7 @@ export default async function LoginPage({
 }: {
   searchParams: { error?: string; callbackUrl?: string }
 }) {
-  const session = await getSession()
+  const session = await getSession().catch(() => null)
   if (session) redirect("/dashboard")
 
   return (

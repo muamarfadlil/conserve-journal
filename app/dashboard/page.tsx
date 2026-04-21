@@ -4,10 +4,11 @@ import { getSession, isAdmin, isSuperAdmin } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 
+export const dynamic = "force-dynamic"
 export const metadata: Metadata = { title: "Dashboard" }
 
 export default async function DashboardPage() {
-  const session = await getSession()
+  const session = await getSession().catch(() => null)
   const role = session?.user.role ?? "USER"
 
   // Stats

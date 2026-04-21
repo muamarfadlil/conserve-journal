@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RegisterPage() {
-  const session = await getSession()
+  const session = await getSession().catch(() => null)
   if (session) redirect("/dashboard")
 
   return (
