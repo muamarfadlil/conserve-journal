@@ -1,65 +1,137 @@
-import Image from "next/image";
+// ============================================================
+// app/page.tsx
+// Halaman Beranda — halaman pertama yang dikunjungi pengguna.
+// Menampilkan sampul edisi terkini dan daftar semua artikel.
+// ============================================================
 
-export default function Home() {
+// Komponen ini adalah Server Component (default di App Router),
+// artinya ia dirender di server sehingga aman mengakses data langsung.
+import { getLatestIssue, formatDate } from "@/lib/articles";
+import JournalCover from "@/components/JournalCover";
+import ArticleCard from "@/components/ArticleCard";
+import type { Metadata } from "next";
+
+// Metadata khusus untuk halaman beranda
+export const metadata: Metadata = {
+  title: "Beranda",
+  description:
+    "CONSERVE Journal of Community Services — Publikasi ilmiah untuk pengabdian " +
+    "masyarakat dan konservasi lingkungan hidup Indonesia.",
+};
+
+export default function HomePage() {
+  // Ambil data edisi terkini langsung dari file data (di server)
+  // Ini adalah pendekatan statik — tidak memerlukan API call
+  const latestIssue = getLatestIssue();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* ===== SEKSI 1: SAMPUL JURNAL (HERO) ===== */}
+      <JournalCover issue={latestIssue} />
+
+      {/* ===== SEKSI 2: DAFTAR ARTIKEL ===== */}
+      <section className="bg-ocean-950 py-14">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Judul seksi dengan metadata edisi */}
+          <div className="mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                {/* Label kecil di atas judul */}
+                <p className="text-xs font-mono text-ocean-500 uppercase tracking-widest mb-1">
+                  Edisi Volume {latestIssue.volume} · Nomor {latestIssue.number}
+                </p>
+                <h2 className="font-serif font-bold text-white text-3xl">
+                  Daftar Artikel
+                </h2>
+                <p className="text-ocean-400 mt-1.5 text-sm">
+                  Diterbitkan pada {formatDate(latestIssue.publishedDate)} ·{" "}
+                  <span className="text-gold-400">{latestIssue.articles.length} artikel</span>
+                </p>
+              </div>
+
+              {/* Tombol unduh seluruh edisi (simulasi) */}
+              <a
+                href="#issue-pdf"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
+                           bg-ocean-800 hover:bg-ocean-700 border border-ocean-700
+                           text-sm text-ocean-300 hover:text-white transition-all duration-200
+                           self-start sm:self-auto"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Unduh Edisi Lengkap (PDF)
+              </a>
+            </div>
+
+            {/* Garis pemisah gradien */}
+            <div className="mt-6 h-px bg-gradient-to-r from-ocean-700 via-ocean-600 to-transparent" />
+          </div>
+
+          {/* === GRID ARTIKEL ===
+              Responsive: 1 kolom di mobile, 2 kolom di tablet, 3 kolom di desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {latestIssue.articles.map((article, index) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                index={index}
+              />
+            ))}
+          </div>
+
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* ===== SEKSI 3: BANNER INFORMASI ===== */}
+      <section className="bg-gradient-to-r from-ocean-900 to-ocean-800 border-y border-ocean-700">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            {[
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                ),
+                value: "P-ISSN",
+                label: "0000-0001",
+              },
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+                  </svg>
+                ),
+                value: "E-ISSN",
+                label: "0000-0000",
+              },
+              {
+                icon: (
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                ),
+                value: "Frekuensi",
+                label: "2 kali setahun",
+              },
+            ].map(({ icon, value, label }) => (
+              <div key={value} className="flex flex-col items-center gap-3 text-ocean-300">
+                <div className="text-ocean-500">{icon}</div>
+                <div>
+                  <p className="text-xs text-ocean-500 uppercase tracking-widest">{value}</p>
+                  <p className="font-semibold text-white mt-0.5">{label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }

@@ -1,26 +1,124 @@
-@import "tailwindcss";
+/* ============================================================
+   app/globals.css
+   Stylesheet global: import font, CSS variables, reset dasar,
+   dan kelas utilitas tambahan yang tidak tersedia di Tailwind.
+   ============================================================ */
 
+/* Import font dari Google Fonts:
+   - Playfair Display: font serif elegan untuk judul (berkesan akademis)
+   - Source Sans 3: font sans-serif bersih untuk teks body */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === CSS VARIABLES (Token Desain) ===
+   Mendefinisikan variabel CSS di root agar bisa digunakan
+   di mana saja, termasuk di luar kelas Tailwind. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-playfair: 'Playfair Display', Georgia, serif;
+  --font-source-sans: 'Source Sans 3', system-ui, sans-serif;
+
+  /* Warna utama */
+  --color-ocean-950: #0a2f2c;
+  --color-ocean-900: #134e4a;
+  --color-gold-400: #fbbf24;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* === BASE STYLES ===
+   Mendefinisikan style dasar untuk elemen HTML */
+@layer base {
+  html {
+    /* Scroll halus untuk anchor link (misal: #scope, #editors) */
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    font-family: var(--font-source-sans);
+    /* Latar belakang gelap bernuansa laut dalam */
+    background-color: #0d1f1e;
+    color: #e2e8f0;
+    /* Anti-aliasing agar teks tampil lebih tajam di semua layar */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Terapkan font serif pada semua elemen dengan class .font-serif */
+  .font-serif {
+    font-family: var(--font-playfair);
+  }
+
+  /* Heading secara default menggunakan font serif */
+  h1, h2, h3, h4 {
+    font-family: var(--font-playfair);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* === KOMPONEN KUSTOM ===
+   Kelas yang bisa dipakai ulang di banyak tempat */
+@layer components {
+  /* Kontainer halaman standar — membatasi lebar dan memberi padding */
+  .page-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12;
+  }
+
+  /* Garis pemisah dengan gradien — lebih elegan dari border biasa */
+  .divider-gradient {
+    @apply h-px bg-gradient-to-r from-transparent via-ocean-700 to-transparent;
+  }
+}
+
+/* === ANIMASI KHUSUS ===
+   Animasi yang tidak bisa sepenuhnya dilakukan oleh Tailwind */
+@layer utilities {
+  /* Kelas untuk memotong teks panjang dengan ellipsis (...) */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Prose styling untuk konten abstrak panjang */
+  .prose-academic {
+    @apply text-ocean-300 leading-relaxed text-base;
+  }
+
+  .prose-academic p + p {
+    @apply mt-4;
+  }
+}
+
+/* === SELECTION COLOR ===
+   Warna teks ketika pengguna men-select/highlight teks di halaman */
+::selection {
+  background-color: rgba(20, 184, 166, 0.3);
+  color: #ffffff;
+}
+
+/* === SCROLLBAR KUSTOM (Chrome, Edge, Safari) ===
+   Membuat scrollbar lebih tipis dan sesuai tema */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a2f2c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0f766e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #14b8a6;
 }
