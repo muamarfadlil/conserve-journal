@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
-import { isSuperAdmin, isAdmin } from "@/lib/auth"
+import { isSuperAdmin, isAdmin } from "@/lib/roles"
 
 type User = {
   id: string

@@ -32,7 +32,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  const session = await getSession().catch(() => null);
 
   return (
     <html lang="id">

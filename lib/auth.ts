@@ -76,12 +76,5 @@ export const authOptions: NextAuthOptions = {
 // Helper — ambil session di Server Component / Route Handler
 export const getSession = () => getServerSession(authOptions)
 
-// Helper — cek apakah user adalah SUPER_ADMIN
-export function isSuperAdmin(role?: string) {
-  return role === "SUPER_ADMIN"
-}
-
-// Helper — cek apakah user adalah ADMIN atau lebih tinggi
-export function isAdmin(role?: string) {
-  return role === "ADMIN" || role === "SUPER_ADMIN"
-}
+// Re-export role helpers (definisi asli di lib/roles.ts agar bisa dipakai client component)
+export { isAdmin, isSuperAdmin } from "./roles"
