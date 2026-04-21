@@ -59,7 +59,11 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json({ message: "Akun berhasil dibuat", user }, { status: 201 })
-  } catch {
-    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
+  } catch (err) {
+    console.error("[register] error:", err)
+    return NextResponse.json({
+      error: "Terjadi kesalahan server",
+      detail: err instanceof Error ? err.message : String(err)
+    }, { status: 500 })
   }
 }
