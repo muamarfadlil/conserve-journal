@@ -25,14 +25,15 @@ enum Role {
 // ============================================================
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  password    String
+  role        Role         @default(USER)
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  submissions Submission[]
 }
 
 // ============================================================
@@ -76,3 +77,43 @@ model Author {
 
   articles Article[]
 }
+
+// ============================================================
+// SUBMISSION MODELS
+// ============================================================
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  REVISION
+  ACCEPTED
+  REJECTED
+}
+
+model Submission {
+  id             Int              @id @default(autoincrement())
+  title          String
+  author         String
+  affiliate      String
+  correspondence String
+  email          String
+  abstract       String           @db.Text
+  introduction   String           @db.Text
+  methodology    String           @db.Text
+  results        String           @db.Text
+  conclusion     String           @db.Text
+  references     String           @db.Text
+  plagiasiUrl    String?
+  coverLetterUrl String?
+  attachmentUrls String[]         @default([])
+  keywords       String[]         @default([])
+  status         SubmissionStatus @default(DRAFT)
+  comments       Json             @default("[]")
+  reviewerNote   String?          @db.Text
+  submittedById  String
+  submittedBy    User             @relation(fields: [submittedById], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+

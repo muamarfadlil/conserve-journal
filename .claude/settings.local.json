@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\\\\.tsx\")",
+      "Bash(npm install:*)",
+      "Bash(node -e \"const na = require\\('next-auth'\\); console.log\\('next-auth OK'\\)\")",
+      "Bash(node -e 'console.log\\(require\\(\\\\\"crypto\\\\\"\\).randomBytes\\(32\\).toString\\(\\\\\"base64\\\\\"\\)\\)')",
+      "Bash(echo \"NEXTAUTH_SECRET=\\\\\"$\\(node -e 'console.log\\(require\\(\\\\\"crypto\\\\\"\\).randomBytes\\(32\\).toString\\(\\\\\"base64\\\\\"\\)\\)'\\)\\\\\"\")",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(32\\).toString\\('base64'\\)\\)\")",
+      "Bash(npx prisma:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e \"const z = require\\('zod'\\); const r = z.string\\(\\).safeParse\\(1\\); if \\(!r.success\\) console.log\\(Object.keys\\(r.error\\)\\)\")",
+      "Bash(node -e \"const z = require\\('zod'\\); const r = z.string\\(\\).safeParse\\(1\\); if \\(!r.success\\) { const e = r.error; console.log\\(Object.getOwnPropertyNames\\(Object.getPrototypeOf\\(e\\)\\).filter\\(k=>k!='constructor'\\)\\) }\")",
+      "Bash(node -e \"const z = require\\('zod'\\); const r = z.string\\(\\).safeParse\\(1\\); if \\(!r.success\\) { console.log\\(JSON.stringify\\(r.error.issues[0]\\)\\) }\")",
+      "Bash(npm run:*)",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(node -e \"const z = require\\('zod'\\); console.log\\(z.ZOD_VERSION ?? 'v3'\\); const s = z.enum\\(['USER','ADMIN']\\).optional\\(\\).default\\('USER'\\); console.log\\(s.parse\\(undefined\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/login)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/dashboard)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/register)",
+      "Bash(xargs grep:*)",
+      "Bash(node -e ':*)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/callback/credentials -H 'Content-Type: application/x-www-form-urlencoded' -d 'email=superadmin%40conservejournal.ac.id&password=superadmin123&csrfToken=test&callbackUrl=%2Fdashboard&json=true' -w '\\\\nHTTP:%{http_code}')",
+      "Bash(node -e \"const z = require\\('zod'\\); console.log\\('zod version:', require\\('./node_modules/zod/package.json'\\).version\\)\")",
+      "Bash(node -e \"console.log\\('bcryptjs version:', require\\('./node_modules/bcryptjs/package.json'\\).version\\)\")",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/register -H 'Content-Type: application/json' -d '{\"name\":\"Test Baru\",\"email\":\"testbaru@test.com\",\"password\":\"password123\",\"role\":\"USER\"}')",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'fix: tambah dependencies TipTap, react-hook-form, dexie, mermaid ke package.json *)",
+      "Bash(git commit -m 'fix: gunakan named export untuk TipTap table extensions *)",
+      "Bash(git commit -m 'fix: hapus argumen false dari setContent yang tidak valid di TipTap *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
