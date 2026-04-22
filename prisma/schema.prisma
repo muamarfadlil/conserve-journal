@@ -17,6 +17,7 @@ datasource db {
 enum Role {
   SUPER_ADMIN
   ADMIN
+  REVIEWER
   USER
 }
 
@@ -33,7 +34,8 @@ model User {
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  submissions Submission[]
+  submissions        Submission[] @relation("SubmissionAuthor")
+  reviewAssignments  Submission[] @relation("SubmissionReviewer")
 }
 
 // ============================================================
@@ -109,10 +111,12 @@ model Submission {
   attachmentUrls String[]         @default([])
   keywords       String[]         @default([])
   status         SubmissionStatus @default(DRAFT)
-  comments       Json             @default("[]")
-  reviewerNote   String?          @db.Text
-  submittedById  String
-  submittedBy    User             @relation(fields: [submittedById], references: [id])
+  comments         Json             @default("[]")
+  reviewerNote     String?          @db.Text
+  submittedById    String
+  submittedBy      User             @relation("SubmissionAuthor", fields: [submittedById], references: [id])
+  assignedReviewerId String?
+  assignedReviewer   User?          @relation("SubmissionReviewer", fields: [assignedReviewerId], references: [id])
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }

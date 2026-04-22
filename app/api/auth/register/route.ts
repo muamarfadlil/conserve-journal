@@ -9,7 +9,7 @@ const registerSchema = z.object({
   name: z.string().min(2, "Nama minimal 2 karakter").max(100),
   email: z.string().email("Email tidak valid"),
   password: z.string().min(8, "Password minimal 8 karakter"),
-  role: z.enum(["USER", "ADMIN", "SUPER_ADMIN"]).optional().default("USER"),
+  role: z.enum(["USER", "REVIEWER", "ADMIN", "SUPER_ADMIN"]).optional().default("USER"),
 })
 
 export async function POST(req: NextRequest) {

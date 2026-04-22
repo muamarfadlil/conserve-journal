@@ -1,5 +1,3 @@
-// app/api/users/route.ts
-// Hanya SUPER_ADMIN yang dapat mengakses
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getSession, isSuperAdmin } from "@/lib/auth"
@@ -9,14 +7,13 @@ import { z } from "zod"
 async function requireSuperAdmin() {
   const session = await getSession().catch(() => null)
   if (!session || !isSuperAdmin(session.user.role)) {
-    return NextResponse.json({ error: "Akses ditolak" }, { status: 403 })
+    return { denied: NextResponse.json({ error: "Akses ditolak" }, { status: 403 }), session: null }
   }
-  return null
+  return { denied: null, session }
 }
 
-// GET /api/users — list semua user
 export async function GET() {
-  const denied = await requireSuperAdmin()
+  const { denied } = await requireSuperAdmin()
   if (denied) return denied
 
   const users = await prisma.user.findMany({
@@ -28,25 +25,30 @@ export async function GET() {
 
 const updateSchema = z.object({
   name: z.string().min(2).max(100).optional(),
-  role: z.enum(["USER", "ADMIN", "SUPER_ADMIN"]).optional(),
+  role: z.enum(["USER", "REVIEWER", "ADMIN", "SUPER_ADMIN"]).optional(),
   isActive: z.boolean().optional(),
   password: z.string().min(8).optional(),
 })
 
-// PATCH /api/users — update user
 export async function PATCH(req: NextRequest) {
-  const denied = await requireSuperAdmin()
+  const { denied, session } = await requireSuperAdmin()
   if (denied) return denied
 
   const { searchParams } = new URL(req.url)
   const id = searchParams.get("id")
   if (!id) return NextResponse.json({ error: "ID diperlukan" }, { status: 400 })
 
+  // Tidak boleh downgrade diri sendiri dari SUPER_ADMIN
+  if (session?.user.id === id) {
+    const body = await req.json()
+    if (body.role && body.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Tidak dapat mengubah role akun Anda sendiri" }, { status: 400 })
+    }
+  }
+
   const body = await req.json()
   const parsed = updateSchema.safeParse(body)
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 })
-  }
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 })
 
   const { password, ...rest } = parsed.data
   const data: Record<string, unknown> = { ...rest }
@@ -60,20 +62,15 @@ export async function PATCH(req: NextRequest) {
   return NextResponse.json(user)
 }
 
-// DELETE /api/users — hapus user
 export async function DELETE(req: NextRequest) {
-  const denied = await requireSuperAdmin()
+  const { denied, session } = await requireSuperAdmin()
   if (denied) return denied
 
   const { searchParams } = new URL(req.url)
   const id = searchParams.get("id")
   if (!id) return NextResponse.json({ error: "ID diperlukan" }, { status: 400 })
-
-  const session = await getSession()
-  if (session?.user.id === id) {
-    return NextResponse.json({ error: "Tidak dapat menghapus akun sendiri" }, { status: 400 })
-  }
+  if (session?.user.id === id) return NextResponse.json({ error: "Tidak dapat menghapus akun sendiri" }, { status: 400 })
 
   await prisma.user.delete({ where: { id } })
-  return NextResponse.json({ message: "User berhasil dihapus" })
+  return NextResponse.json({ message: "Pengguna berhasil dihapus" })
 }

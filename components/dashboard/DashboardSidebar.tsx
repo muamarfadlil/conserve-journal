@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
-import { isSuperAdmin, isAdmin } from "@/lib/roles"
+import { isSuperAdmin, isAdmin, isReviewer } from "@/lib/roles"
 
 type User = {
   id: string
@@ -16,18 +16,21 @@ type User = {
 const ROLE_LABEL: Record<string, string> = {
   SUPER_ADMIN: "Super Admin",
   ADMIN: "Admin",
-  USER: "Pengguna",
+  REVIEWER: "Reviewer",
+  USER: "Penulis",
 }
 
 const ROLE_COLOR: Record<string, string> = {
   SUPER_ADMIN: "text-red-400",
   ADMIN: "text-amber-400",
+  REVIEWER: "text-blue-400",
   USER: "text-ocean-400",
 }
 
 const ROLE_BG: Record<string, string> = {
   SUPER_ADMIN: "bg-red-900/30 border-red-800",
   ADMIN: "bg-amber-900/30 border-amber-800",
+  REVIEWER: "bg-blue-900/30 border-blue-800",
   USER: "bg-ocean-900 border-ocean-700",
 }
 
@@ -73,7 +76,7 @@ export default function DashboardSidebar({ user }: { user: User }) {
         {
           href: "/dashboard/reviewer",
           label: "Reviewer",
-          show: isAdmin(role),
+          show: isReviewer(role),
           exact: false,
           icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>,
         },

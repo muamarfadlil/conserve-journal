@@ -17,15 +17,17 @@ type UsersTableProps = {
   currentUserId: string
 }
 
-const ROLES = ["USER", "ADMIN", "SUPER_ADMIN"] as const
+const ROLES = ["USER", "REVIEWER", "ADMIN", "SUPER_ADMIN"] as const
 const ROLE_LABEL: Record<string, string> = {
   SUPER_ADMIN: "Super Admin",
   ADMIN: "Admin",
-  USER: "User",
+  REVIEWER: "Reviewer",
+  USER: "Penulis",
 }
 const ROLE_COLOR: Record<string, string> = {
   SUPER_ADMIN: "bg-red-900/30 text-red-300 border-red-700",
-  ADMIN: "bg-ocean-800 text-ocean-300 border-ocean-600",
+  ADMIN: "bg-amber-900/30 text-amber-300 border-amber-700",
+  REVIEWER: "bg-blue-900/30 text-blue-300 border-blue-700",
   USER: "bg-ocean-900 text-ocean-500 border-ocean-700",
 }
 

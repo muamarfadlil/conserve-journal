@@ -9,9 +9,20 @@ export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token
     const pathname = req.nextUrl.pathname
+    const role = token?.role as string | undefined
 
-    // Rute /dashboard/users hanya untuk SUPER_ADMIN
-    if (pathname.startsWith("/dashboard/users") && token?.role !== "SUPER_ADMIN") {
+    if (pathname.startsWith("/dashboard/users") && role !== "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard?error=forbidden", req.url))
+    }
+
+    if (pathname.startsWith("/dashboard/articles") && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard?error=forbidden", req.url))
+    }
+
+    if (
+      (pathname.startsWith("/dashboard/reviewer") || pathname.startsWith("/reviewer/")) &&
+      role !== "REVIEWER" && role !== "ADMIN" && role !== "SUPER_ADMIN"
+    ) {
       return NextResponse.redirect(new URL("/dashboard?error=forbidden", req.url))
     }
 
