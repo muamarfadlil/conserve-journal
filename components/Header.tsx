@@ -67,9 +67,9 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   className={`
-                    px-4 py-2 rounded-md text-sm font-medium transition-all duration-200
+                    px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 relative
                     ${isActive
-                      ? "bg-ocean-700 text-white"
+                      ? "text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:rounded-full after:bg-gold-400"
                       : "text-ocean-300 hover:text-white hover:bg-ocean-800"
                     }
                   `}
@@ -102,7 +102,7 @@ export default function Header() {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-ocean-900 border border-ocean-700 rounded-lg shadow-xl py-1 z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-ocean-900/95 backdrop-blur-sm border border-ocean-700 rounded-lg shadow-xl shadow-ocean-950/60 py-1 z-50">
                     <Link
                       href="/dashboard"
                       onClick={() => setUserMenuOpen(false)}

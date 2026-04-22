@@ -136,9 +136,9 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
                 <div className="flex flex-wrap gap-2">
                   {article!.keywords.map((keyword) => (
                     <span key={keyword}
-                      className="px-3 py-1 text-xs rounded-full bg-ocean-800 border border-ocean-700
-                                 text-ocean-300 hover:border-ocean-500 transition-colors">
-                      {keyword}
+                      className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-full bg-ocean-800 border border-ocean-700
+                                 text-ocean-300 hover:border-ocean-500 hover:text-white transition-all duration-200">
+                      <span className="text-ocean-600">#</span>{keyword}
                     </span>
                   ))}
                 </div>

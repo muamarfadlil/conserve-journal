@@ -80,17 +80,17 @@ export default function ArticleCard({ article, index }: ArticleCardProps) {
           <Link
             href={`/articles/${article.id}`}
             className="inline-flex items-center gap-1.5 text-sm text-ocean-400
-                       hover:text-gold-400 transition-colors duration-200 font-medium"
+                       group-hover:text-gold-400 transition-colors duration-200 font-medium"
           >
             Baca Selengkapnya
-            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200"
                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M9 5l7 7-7 7" />
             </svg>
           </Link>
           {article.doi && (
-            <span className="text-[10px] font-mono text-ocean-700" title={article.doi}>
+            <span className="text-[10px] font-mono text-ocean-600 bg-ocean-900 border border-ocean-800 px-1.5 py-0.5 rounded" title={article.doi}>
               DOI
             </span>
           )}

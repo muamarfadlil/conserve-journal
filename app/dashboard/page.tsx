@@ -77,11 +77,11 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.filter((s) => s.show).map((stat) => (
-          <div key={stat.label} className="bg-ocean-900 border border-ocean-800 rounded-xl p-5">
+          <div key={stat.label} className="bg-ocean-900 border border-ocean-800 rounded-xl p-5 transition-all duration-200 hover:border-ocean-700 hover:shadow-md hover:shadow-ocean-950/60 hover:-translate-y-0.5">
             <div className={`inline-flex p-2.5 rounded-lg ${stat.bg} ${stat.color} mb-3`}>
               {stat.icon}
             </div>
-            <p className="text-2xl font-bold text-white">{stat.value}</p>
+            <p className="text-2xl font-bold text-white tabular-nums">{stat.value}</p>
             <p className="text-ocean-400 text-sm mt-0.5">{stat.label}</p>
           </div>
         ))}

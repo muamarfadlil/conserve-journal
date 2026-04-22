@@ -62,17 +62,15 @@ export default async function HomePage() {
 
       <section className="bg-gradient-to-r from-ocean-900 to-ocean-800 border-y border-ocean-700">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-ocean-700/50">
             {[
               { value: "P-ISSN", label: "0000-0001" },
               { value: "E-ISSN", label: "0000-0000" },
               { value: "Frekuensi", label: "2 kali setahun" },
             ].map(({ value, label }) => (
-              <div key={value} className="flex flex-col items-center gap-3 text-ocean-300">
-                <div>
-                  <p className="text-xs text-ocean-500 uppercase tracking-widest">{value}</p>
-                  <p className="font-semibold text-white mt-0.5">{label}</p>
-                </div>
+              <div key={value} className="flex flex-col items-center gap-1 text-ocean-300 py-4 sm:py-0">
+                <p className="text-[10px] text-ocean-500 uppercase tracking-widest font-mono">{value}</p>
+                <p className="font-semibold text-white text-lg">{label}</p>
               </div>
             ))}
           </div>

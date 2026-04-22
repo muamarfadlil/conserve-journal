@@ -87,7 +87,7 @@ export default function DashboardSidebar({ user }: { user: User }) {
       {/* User Info */}
       <div className="p-4 border-b border-ocean-800">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-ocean-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-ocean-600 to-ocean-800 flex items-center justify-center text-sm font-bold text-white flex-shrink-0 ring-2 ring-ocean-700">
             {user.name?.[0]?.toUpperCase() ?? "U"}
           </div>
           <div className="min-w-0">
@@ -111,7 +111,7 @@ export default function DashboardSidebar({ user }: { user: User }) {
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? "bg-ocean-700 text-white"
+                    ? "bg-ocean-700/70 text-white ring-1 ring-ocean-600 ring-inset"
                     : "text-ocean-400 hover:text-white hover:bg-ocean-800"
                 }`}
               >
