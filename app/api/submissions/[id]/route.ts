@@ -63,7 +63,32 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const updated = await prisma.submission.update({
     where: { id: Number(params.id) },
     data: { ...body, updatedAt: new Date() },
+    include: { submittedBy: { select: { id: true } } },
   })
+
+  // Kirim notifikasi ke penulis bila status berubah
+  if (body.status && body.status !== submission.status) {
+    const STATUS_NOTIF: Record<string, { title: string; body: string }> = {
+      UNDER_REVIEW: { title: "Artikel Sedang Direview", body: `Artikel "${submission.title}" kini sedang dalam proses review.` },
+      REVISION:     { title: "Revisi Diperlukan",       body: `Artikel "${submission.title}" memerlukan revisi. Silakan cek catatan reviewer.` },
+      ACCEPTED:     { title: "Artikel Diterima!",       body: `Selamat! Artikel "${submission.title}" telah diterima untuk dipublikasikan.` },
+      REJECTED:     { title: "Artikel Ditolak",         body: `Artikel "${submission.title}" tidak dapat diterima. Hubungi editor untuk informasi lebih lanjut.` },
+      PUBLISHED:    { title: "Artikel Dipublikasikan!", body: `Artikel "${submission.title}" kini telah dipublikasikan di CONSERVE Journal.` },
+    }
+    const notif = STATUS_NOTIF[body.status]
+    if (notif) {
+      await prisma.notification.create({
+        data: {
+          userId: submission.submittedById,
+          type: "STATUS_CHANGE",
+          title: notif.title,
+          body: notif.body,
+          link: `/dashboard/submissions`,
+        },
+      })
+    }
+  }
+
   return NextResponse.json(updated)
 }
 

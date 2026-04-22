@@ -11,6 +11,7 @@ type User = {
   name?: string | null
   email?: string | null
   role: string
+  avatarUrl?: string | null
 }
 
 const ROLE_META: Record<string, { label: string; color: string; bg: string }> = {
@@ -52,6 +53,10 @@ export default function DashboardSidebar({ user }: { user: User }) {
         {
           href: "/dashboard/submissions", label: "Artikel Saya", show: true, exact: false,
           icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+        },
+        {
+          href: "/dashboard/profile", label: "Profil Saya", show: true, exact: false,
+          icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
         },
       ],
     },
@@ -116,9 +121,12 @@ export default function DashboardSidebar({ user }: { user: User }) {
         <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg
                         bg-ocean-800/30 border border-ocean-800/40">
           <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center
-                          text-xs font-bold text-white
+                          text-xs font-bold text-white overflow-hidden
                           bg-gradient-to-br from-ocean-500 to-ocean-700">
-            {getInitials(user.name)}
+            {user.avatarUrl
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+              : getInitials(user.name)}
           </div>
           <div className="min-w-0">
             <p className="text-white text-xs font-medium truncate leading-tight">

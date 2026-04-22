@@ -61,6 +61,7 @@ export default function Header() {
 
   const isLoggedIn = !!session?.user;
   const initials = getInitials(session?.user?.name);
+  const avatarUrl = session?.user?.avatarUrl;
 
   return (
     <header className="sticky top-0 z-50 bg-ocean-950/95 backdrop-blur-sm border-b border-ocean-800 shadow-lg">
@@ -114,8 +115,12 @@ export default function Header() {
                              border border-ocean-700 hover:border-ocean-500 transition-all duration-200"
                 >
                   <div className="w-7 h-7 rounded-full bg-gradient-to-br from-ocean-500 to-ocean-700
-                                  flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                    {initials}
+                                  flex items-center justify-center text-xs font-bold text-white flex-shrink-0
+                                  overflow-hidden">
+                    {avatarUrl
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                      : initials}
                   </div>
                   <div className="text-left">
                     <p className="text-xs text-white font-medium leading-none mb-0.5">
@@ -229,8 +234,12 @@ export default function Header() {
                 <div className="mx-4 my-2 h-px bg-ocean-800" />
                 <div className="flex items-center gap-3 px-4 py-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-ocean-500 to-ocean-700
-                                  flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                    {initials}
+                                  flex items-center justify-center text-xs font-bold text-white flex-shrink-0
+                                  overflow-hidden">
+                    {avatarUrl
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                      : initials}
                   </div>
                   <div className="min-w-0">
                     <p className="text-white text-sm font-medium truncate">{session.user.name}</p>

@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import DashboardSidebar from "./DashboardSidebar"
+import NotificationBell from "./NotificationBell"
 
 type User = {
   id: string
   name?: string | null
   email?: string | null
   role: string
+  avatarUrl?: string | null
 }
 
 export default function DashboardShell({
@@ -74,11 +76,14 @@ export default function DashboardShell({
               <span className="text-ocean-700 hidden sm:inline">·</span>
               <span className="text-white font-medium">CONSERVE Journal</span>
             </p>
-            <p className="text-ocean-600 text-xs hidden md:block flex-shrink-0">
-              {new Date().toLocaleDateString("id-ID", {
-                weekday: "long", day: "numeric", month: "long", year: "numeric",
-              })}
-            </p>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <p className="text-ocean-600 text-xs hidden md:block">
+                {new Date().toLocaleDateString("id-ID", {
+                  weekday: "long", day: "numeric", month: "long", year: "numeric",
+                })}
+              </p>
+              <NotificationBell />
+            </div>
           </div>
         </header>
 

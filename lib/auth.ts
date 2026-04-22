@@ -38,16 +38,22 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           role: user.role,
+          avatarUrl: user.avatarUrl ?? null,
         }
       },
     }),
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id
         token.role = (user as { role: string }).role
+        token.avatarUrl = (user as { avatarUrl?: string | null }).avatarUrl ?? null
+      }
+      // Allow client-side update() calls to refresh avatarUrl in token
+      if (trigger === "update" && session?.avatarUrl !== undefined) {
+        token.avatarUrl = session.avatarUrl
       }
       return token
     },
@@ -55,6 +61,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string
         session.user.role = token.role as string
+        session.user.avatarUrl = token.avatarUrl as string | null | undefined
       }
       return session
     },

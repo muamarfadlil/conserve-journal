@@ -1,12 +1,14 @@
 "use client";
 
 import type { Article } from "@/lib/articles";
+import { useToast } from "@/components/ui/Toast";
 
 interface ArticleActionsProps {
   article: Article;
 }
 
 export default function ArticleActions({ article }: ArticleActionsProps) {
+  const { showToast } = useToast();
 
   const handleCopyCitation = () => {
     const authorNames = article.authors.map(a => a.name);
@@ -23,21 +25,21 @@ export default function ArticleActions({ article }: ArticleActionsProps) {
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(citation).then(() => {
-        alert("Kutipan APA berhasil disalin ke clipboard!");
+        showToast("Kutipan APA berhasil disalin ke clipboard!", "success");
       });
     } else {
-      alert("Browser Anda tidak mendukung salin otomatis.");
+      showToast("Browser Anda tidak mendukung salin otomatis.", "error");
     }
   };
 
   const handleCopyDOI = () => {
     if (!article.doi) {
-      alert("Artikel ini belum memiliki DOI.");
+      showToast("Artikel ini belum memiliki DOI.", "info");
       return;
     }
     if (navigator.clipboard) {
       navigator.clipboard.writeText(article.doi).then(() => {
-        alert("DOI berhasil disalin!");
+        showToast("DOI berhasil disalin!", "success");
       });
     }
   };

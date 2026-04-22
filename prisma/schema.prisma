@@ -26,16 +26,37 @@ enum Role {
 // ============================================================
 
 model User {
-  id          String       @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
-  email       String       @unique
+  email       String    @unique
   password    String
-  role        Role         @default(USER)
-  isActive    Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  submissions        Submission[] @relation("SubmissionAuthor")
-  reviewAssignments  Submission[] @relation("SubmissionReviewer")
+  role        Role      @default(USER)
+  isActive    Boolean   @default(true)
+
+  // Profile
+  avatarUrl   String?
+  bio         String?   @db.Text
+  affiliation String?
+  orcidId     String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  submissions        Submission[]   @relation("SubmissionAuthor")
+  reviewAssignments  Submission[]   @relation("SubmissionReviewer")
+  notifications      Notification[]
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // STATUS_CHANGE | ASSIGNED | COMMENT | GENERAL
+  title     String
+  body      String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
 }
 
 // ============================================================
@@ -120,4 +141,3 @@ model Submission {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
-
