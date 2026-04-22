@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SessionProvider from "@/components/SessionProvider";
 import { ToastProvider } from "@/components/ui/Toast";
+import ThemeProvider from "@/components/ThemeProvider";
 import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -36,8 +37,8 @@ export default async function RootLayout({
   const session = await getSession().catch(() => null);
 
   return (
-    <html lang="id">
-      <body className="flex flex-col min-h-screen bg-ocean-950">
+    <html lang="id" suppressHydrationWarning>
+      <body className="flex flex-col min-h-screen">
         {/* Skip to main content for keyboard users */}
         <a
           href="#main-content"
@@ -48,13 +49,15 @@ export default async function RootLayout({
           Langsung ke konten
         </a>
 
-        <SessionProvider session={session}>
-          <ToastProvider>
-            <Header />
-            <main id="main-content" className="flex-1">{children}</main>
-            <Footer />
-          </ToastProvider>
-        </SessionProvider>
+        <ThemeProvider>
+          <SessionProvider session={session}>
+            <ToastProvider>
+              <Header />
+              <main id="main-content" className="flex-1">{children}</main>
+              <Footer />
+            </ToastProvider>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

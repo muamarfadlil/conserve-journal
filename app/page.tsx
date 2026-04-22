@@ -26,7 +26,8 @@ export default async function HomePage() {
       <JournalCover issue={latestIssue} />
 
       {/* Section: Daftar Artikel */}
-      <section className="relative bg-gradient-to-b from-ocean-950 via-ocean-950 to-ocean-900/80 py-16">
+      <section className="relative py-16 bg-[var(--bg-base)]
+                          dark:bg-gradient-to-b dark:from-ocean-950 dark:via-ocean-950 dark:to-ocean-900/80">
         {/* Subtle radial glow di tengah atas */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-40
                         bg-ocean-700/10 blur-[80px] pointer-events-none" />
@@ -42,8 +43,8 @@ export default async function HomePage() {
                     Edisi Volume {latestIssue.volume} · Nomor {latestIssue.issue}
                   </p>
                 </div>
-                <h2 className="font-serif font-bold text-white text-3xl">Daftar Artikel</h2>
-                <p className="text-ocean-400 mt-1.5 text-sm">
+                <h2 className="font-serif font-bold text-[var(--text-primary)] text-3xl">Daftar Artikel</h2>
+                <p className="text-[var(--text-secondary)] mt-1.5 text-sm">
                   {latestIssue.month} {latestIssue.year} ·{" "}
                   <span className="text-gold-400 font-medium">{latestIssue.articles.length} artikel</span>
                 </p>
@@ -76,9 +77,10 @@ export default async function HomePage() {
       </section>
 
       {/* Section: ISSN & Info */}
-      <section className="relative overflow-hidden
-                          bg-gradient-to-br from-ocean-900 via-ocean-800 to-ocean-900
-                          border-y border-ocean-700/60">
+      <section className="relative overflow-hidden border-y
+                          border-[var(--border-default)]
+                          bg-[var(--bg-surface-alt)]
+                          dark:bg-gradient-to-br dark:from-ocean-900 dark:via-ocean-800 dark:to-ocean-900">
         {/* Ambient glow */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-24
@@ -95,14 +97,15 @@ export default async function HomePage() {
               <div
                 key={key}
                 className={`flex flex-col items-center gap-1 py-6 cursor-default
-                            group transition-all duration-200 hover:bg-ocean-700/20
-                            ${i > 0 ? "border-t sm:border-t-0 sm:border-l border-ocean-700/40" : ""}`}
+                            group transition-all duration-200 hover:bg-[var(--bg-surface)]
+                            ${i > 0 ? "border-t sm:border-t-0 sm:border-l border-[var(--border-default)]" : ""}`}
               >
-                <p className="text-[10px] font-mono text-ocean-500 uppercase tracking-widest
-                              group-hover:text-ocean-400 transition-colors duration-200">
+                <p className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-widest
+                              group-hover:text-ocean-500 transition-colors duration-200">
                   {key}
                 </p>
-                <p className="font-semibold text-white text-xl group-hover:text-gold-400
+                <p className="font-semibold text-[var(--text-primary)] text-xl
+                              group-hover:text-gold-500 dark:group-hover:text-gold-400
                               transition-colors duration-200">
                   {value}
                 </p>

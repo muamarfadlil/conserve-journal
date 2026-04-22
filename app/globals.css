@@ -4,14 +4,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens ─────────────────────────────────────────── */
 :root {
   --font-playfair: 'Playfair Display', Georgia, serif;
   --font-source-sans: 'Source Sans 3', system-ui, sans-serif;
-  --color-ocean-950: #0a2f2c;
-  --color-ocean-900: #134e4a;
-  --color-gold-400: #fbbf24;
+
+  /* Light mode (default) */
+  --bg-base:          #f8f4ee;
+  --bg-surface:       #ffffff;
+  --bg-surface-alt:   #f2ece2;
+  --bg-surface-glass: rgba(255,255,255,0.80);
+  --bg-header:        rgba(252, 249, 244, 0.96);
+  --text-primary:     #0a2f2c;
+  --text-secondary:   #134e4a;
+  --text-muted:       #0f766e;
+  --text-faint:       #5eead4;
+  --border-default:   #d4c9b0;
+  --border-subtle:    rgba(180,165,140,0.50);
+  --scrollbar-track:  #ede8df;
+  --scrollbar-thumb:  #a8c5c0;
+  --scrollbar-hover:  #14b8a6;
+  --selection-bg:     rgba(20, 184, 166, 0.20);
 }
 
+.dark {
+  --bg-base:          #0d1f1e;
+  --bg-surface:       #134e4a;
+  --bg-surface-alt:   rgba(19, 78, 74, 0.60);
+  --bg-surface-glass: rgba(10, 47, 44, 0.80);
+  --bg-header:        rgba(10, 47, 44, 0.95);
+  --text-primary:     #e2e8f0;
+  --text-secondary:   #5eead4;
+  --text-muted:       #2dd4bf;
+  --text-faint:       #0f766e;
+  --border-default:   #0f766e;
+  --border-subtle:    rgba(15, 118, 110, 0.40);
+  --scrollbar-track:  #0a2f2c;
+  --scrollbar-thumb:  #0f766e;
+  --scrollbar-hover:  #14b8a6;
+  --selection-bg:     rgba(20, 184, 166, 0.30);
+}
+
+/* ── Base styles ───────────────────────────────────────────── */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -19,53 +53,68 @@
 
   body {
     font-family: var(--font-source-sans);
-    background-color: #0d1f1e;
-    color: #e2e8f0;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Firefox scrollbar */
     scrollbar-width: thin;
-    scrollbar-color: #0f766e #0a2f2c;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
-  .font-serif {
-    font-family: var(--font-playfair);
-  }
+  .font-serif { font-family: var(--font-playfair); }
+  h1, h2, h3, h4 { font-family: var(--font-playfair); }
 
-  h1, h2, h3, h4 {
-    font-family: var(--font-playfair);
-  }
-
-  /* Keyboard focus ring — visible only for keyboard/non-mouse users */
   :focus-visible {
     outline: 2px solid #14b8a6;
     outline-offset: 2px;
     border-radius: 4px;
   }
 
-  /* Remove default browser outline for mouse users */
-  :focus:not(:focus-visible) {
-    outline: none;
-  }
+  :focus:not(:focus-visible) { outline: none; }
 }
 
+/* ── Component utilities ───────────────────────────────────── */
 @layer components {
   .page-container {
     @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12;
   }
 
   .divider-gradient {
-    @apply h-px bg-gradient-to-r from-transparent via-ocean-700 to-transparent;
+    @apply h-px;
+    background: linear-gradient(to right, transparent, var(--border-default), transparent);
   }
 
-  /* Reusable input style for dark theme */
-  .input-dark {
-    @apply w-full px-3 py-2 bg-ocean-800 border border-ocean-700 rounded-lg text-white text-sm
-           placeholder-ocean-600 focus:outline-none focus:ring-2 focus:ring-ocean-500
-           focus:border-transparent transition-colors;
+  /* Theme-aware surface card */
+  .card-surface {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: 1rem;
   }
+
+  /* Theme-aware input */
+  .input-dark {
+    @apply w-full px-3 py-2 rounded-lg text-sm
+           focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:border-transparent
+           transition-colors;
+    background-color: var(--bg-surface-alt);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+  }
+
+  .input-auth {
+    @apply w-full px-4 py-2.5 rounded-lg text-sm
+           focus:outline-none focus:ring-2 focus:ring-ocean-500/60 focus:border-ocean-500/40
+           transition-all duration-200;
+    background-color: color-mix(in srgb, var(--bg-surface-alt) 80%, transparent);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
+
+  .input-auth::placeholder { color: var(--text-muted); opacity: 0.7; }
 }
 
+/* ── Utilities ─────────────────────────────────────────────── */
 @layer utilities {
   .line-clamp-2 {
     display: -webkit-box;
@@ -85,45 +134,37 @@
     @apply text-ocean-300 leading-relaxed text-base;
   }
 
-  .prose-academic p + p {
-    @apply mt-4;
-  }
+  .prose-academic p + p { @apply mt-4; }
+
+  /* Semantic token helpers */
+  .bg-theme-base    { background-color: var(--bg-base); }
+  .bg-theme-surface { background-color: var(--bg-surface); }
+  .text-theme-primary   { color: var(--text-primary); }
+  .text-theme-secondary { color: var(--text-secondary); }
+  .text-theme-muted     { color: var(--text-muted); }
+  .border-theme         { border-color: var(--border-default); }
 }
 
-/* Text selection */
+/* ── Text selection ─────────────────────────────────────────── */
 ::selection {
-  background-color: rgba(20, 184, 166, 0.3);
-  color: #ffffff;
+  background-color: var(--selection-bg);
+  color: var(--text-primary);
 }
 
-/* Scrollbar — Chrome, Edge, Safari */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+
+/* ── Theme transition (smooth swap) ────────────────────────── */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 }
 
-::-webkit-scrollbar-track {
-  background: #0a2f2c;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #0f766e;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #14b8a6;
-}
-
-/* Auth card input glow on focus */
-.input-auth {
-  @apply w-full px-4 py-2.5 bg-ocean-800/80 border border-ocean-700/60 rounded-lg
-         text-white placeholder-ocean-600 text-sm
-         focus:outline-none focus:ring-2 focus:ring-ocean-500/60 focus:border-ocean-500/40
-         focus:bg-ocean-800 transition-all duration-200;
-}
-
-/* Reduce motion for users who prefer it */
+/* ── Reduce motion ──────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
