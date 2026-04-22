@@ -70,8 +70,8 @@ export default function DashboardSidebar({ user }: { user: User }) {
       {/* Logo */}
       <div className="p-5 border-b border-ocean-800">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-ocean-500 flex-shrink-0">
-            <Image src="/logo.png" alt="CONSERVE Logo" width={32} height={32} className="w-full h-full object-cover" />
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-white ring-2 ring-ocean-500 flex-shrink-0 flex items-center justify-center p-0.5">
+            <Image src="/logo.png" alt="CONSERVE Logo" width={32} height={32} className="w-full h-full object-contain" />
           </div>
           <div>
             <p className="font-serif font-bold text-white text-sm leading-none">CONSERVE</p>

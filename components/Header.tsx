@@ -40,8 +40,8 @@ export default function Header() {
 
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-ocean-500 group-hover:ring-gold-400 transition-all duration-300 flex-shrink-0">
-              <Image src="/logo.png" alt="CONSERVE Logo" width={36} height={36} className="w-full h-full object-cover" />
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-white ring-2 ring-ocean-500 group-hover:ring-gold-400 transition-all duration-300 flex-shrink-0 flex items-center justify-center p-0.5">
+              <Image src="/logo.png" alt="CONSERVE Logo" width={36} height={36} className="w-full h-full object-contain" />
             </div>
             <div>
               <span className="font-serif font-bold text-white text-lg leading-tight tracking-wide">
