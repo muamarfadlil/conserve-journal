@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
 import { isSuperAdmin, isAdmin } from "@/lib/roles"
@@ -69,13 +70,8 @@ export default function DashboardSidebar({ user }: { user: User }) {
       {/* Logo */}
       <div className="p-5 border-b border-ocean-800">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-ocean-700 flex items-center justify-center ring-2 ring-ocean-500">
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-ocean-100"
-                 stroke="currentColor" strokeWidth="1.8">
-              <path d="M3 12c2-4 4-4 6 0s4 4 6 0" />
-              <path d="M3 17c2-4 4-4 6 0s4 4 6 0" />
-              <path d="M3 7c2-4 4-4 6 0s4 4 6 0" />
-            </svg>
+          <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-ocean-500 flex-shrink-0">
+            <Image src="/logo.png" alt="CONSERVE Logo" width={32} height={32} className="w-full h-full object-cover" />
           </div>
           <div>
             <p className="font-serif font-bold text-white text-sm leading-none">CONSERVE</p>

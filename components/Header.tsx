@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
@@ -39,14 +40,8 @@ export default function Header() {
 
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-full bg-ocean-700 flex items-center justify-center
-                            ring-2 ring-ocean-500 group-hover:ring-gold-400 transition-all duration-300">
-              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-ocean-100"
-                   stroke="currentColor" strokeWidth="1.8">
-                <path d="M3 12c2-4 4-4 6 0s4 4 6 0" />
-                <path d="M3 17c2-4 4-4 6 0s4 4 6 0" />
-                <path d="M3 7c2-4 4-4 6 0s4 4 6 0" />
-              </svg>
+            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-ocean-500 group-hover:ring-gold-400 transition-all duration-300 flex-shrink-0">
+              <Image src="/logo.png" alt="CONSERVE Logo" width={36} height={36} className="w-full h-full object-cover" />
             </div>
             <div>
               <span className="font-serif font-bold text-white text-lg leading-tight tracking-wide">
