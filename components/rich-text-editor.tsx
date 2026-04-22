@@ -65,7 +65,7 @@ export default function RichTextEditor({
   // Sync external value changes (e.g. form reset)
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value, false)
+      editor.commands.setContent(value)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
