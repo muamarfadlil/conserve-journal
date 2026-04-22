@@ -15,6 +15,14 @@ const STATUS_OPTIONS = [
   { value: "REJECTED",     label: "Ditolak",          cls: "text-red-700 border-red-300 bg-red-50 dark:text-red-400 dark:border-red-700 dark:bg-red-900/30" },
 ]
 
+const STATUS_ICON: Record<string, React.ReactNode> = {
+  SUBMITTED:    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,
+  UNDER_REVIEW: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />,
+  REVISION:     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />,
+  ACCEPTED:     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />,
+  REJECTED:     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />,
+}
+
 interface Reviewer { id: string; name: string; email: string }
 
 interface Submission {
@@ -34,7 +42,6 @@ interface SessionUser { id: string; name: string; role: string }
 
 type PendingComment = { text: string; from: number; to: number; section: string }
 
-// ── Section label colours ─────────────────────────────────────────────────
 const SECTION_COLOR: Record<string, string> = {
   "Abstrak":           "bg-sky-100 text-sky-700 border-sky-300 dark:bg-sky-900/30 dark:text-sky-400 dark:border-sky-700",
   "Pendahuluan":       "bg-violet-100 text-violet-700 border-violet-300 dark:bg-violet-900/30 dark:text-violet-400 dark:border-violet-700",
@@ -43,6 +50,9 @@ const SECTION_COLOR: Record<string, string> = {
   "Kesimpulan":        "bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-700",
   "Referensi":         "bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600",
 }
+
+// Sections that have inline comments, grouped for author summary
+const ARTICLE_SECTIONS = ["Abstrak", "Pendahuluan", "Metodologi", "Hasil dan Diskusi", "Kesimpulan", "Referensi"]
 
 export default function ReviewerPage() {
   const { id } = useParams<{ id: string }>()
@@ -67,8 +77,9 @@ export default function ReviewerPage() {
 
   const commentInputRef = useRef<HTMLTextAreaElement>(null)
 
-  const isAdmin    = currentUser?.role === "ADMIN" || currentUser?.role === "SUPER_ADMIN"
-  const isReviewer = currentUser?.role === "REVIEWER" || isAdmin
+  const isAdmin      = currentUser?.role === "ADMIN" || currentUser?.role === "SUPER_ADMIN"
+  const isReviewer   = currentUser?.role === "REVIEWER" || isAdmin
+  const isAuthorView = currentUser?.role === "USER"   // regular author, not staff
 
   // ── Load data ─────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -101,15 +112,11 @@ export default function ReviewerPage() {
   }, [isAdmin])
 
   // ── Comment handlers ──────────────────────────────────────────────────────
-
-  // Factory: returns an onAddComment callback tagged with a section name.
-  // Called by both RichTextEditor (for RTE sections) and AbstractSection (plain text).
   const addCommentForSection = useCallback((section: string) =>
     (text: string, from: number, to: number) => {
       setPendingComment({ text, from, to, section })
       setCommentInput("")
       setCommentError("")
-      // Focus the textarea in the next tick (after state update & re-render)
       setTimeout(() => commentInputRef.current?.focus(), 50)
     }, [])
 
@@ -162,11 +169,7 @@ export default function ReviewerPage() {
       const res = await fetch(`/api/submissions/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status,
-          reviewerNote,
-          assignedReviewerId: assignedReviewerId || null,
-        }),
+        body: JSON.stringify({ status, reviewerNote, assignedReviewerId: assignedReviewerId || null }),
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error ?? "Gagal menyimpan") }
       setDecisionSaved(true)
@@ -214,9 +217,9 @@ export default function ReviewerPage() {
           </svg>
         </div>
         <p className="text-[var(--text-primary)] font-semibold">{error || "Artikel tidak ditemukan"}</p>
-        <a href="/dashboard/reviewer"
+        <a href={isAuthorView ? "/dashboard/submissions" : "/dashboard/reviewer"}
            className="text-sm text-[var(--text-muted)] hover:text-ocean-500 transition-colors">
-          ← Kembali ke Panel Reviewer
+          ← Kembali
         </a>
       </div>
     </div>
@@ -225,12 +228,14 @@ export default function ReviewerPage() {
   const currentStatus = STATUS_OPTIONS.find(s => s.value === status)
   const noteWords = reviewerNote.trim().split(/\s+/).filter(Boolean).length
 
-  // Group comments by section for the badge count in article sections
   const commentsBySection = comments.reduce<Record<string, number>>((acc, c) => {
     const sec = c.section ?? "Umum"
     acc[sec] = (acc[sec] ?? 0) + 1
     return acc
   }, {})
+
+  // Sections with inline comments — for author summary
+  const commentedSections = ARTICLE_SECTIONS.filter(s => (commentsBySection[s] ?? 0) > 0)
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -240,7 +245,7 @@ export default function ReviewerPage() {
                       bg-[var(--bg-surface-alt)]/95 backdrop-blur-sm border-[var(--border-default)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <a href="/dashboard/reviewer"
+            <a href={isAuthorView ? "/dashboard/submissions" : "/dashboard/reviewer"}
               className="p-1.5 rounded-lg transition-colors flex-shrink-0
                          text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -250,8 +255,10 @@ export default function ReviewerPage() {
             <div className="min-w-0">
               <p className="text-[var(--text-primary)] text-sm font-semibold truncate">{article.title}</p>
               <p className="text-[var(--text-muted)] text-[10px] font-mono">
-                #{article.id} · {article.author}
-                {article.assignedReviewer && ` · Reviewer: ${article.assignedReviewer.name}`}
+                {isAuthorView
+                  ? `#${article.id} · Detail Artikel Anda`
+                  : `#${article.id} · ${article.author}${article.assignedReviewer ? ` · Reviewer: ${article.assignedReviewer.name}` : ""}`
+                }
               </p>
             </div>
           </div>
@@ -297,7 +304,6 @@ export default function ReviewerPage() {
                 ))}
               </dl>
 
-              {/* Keywords */}
               {article.keywords?.length > 0 && (
                 <div>
                   <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-mono mb-1.5">
@@ -316,7 +322,6 @@ export default function ReviewerPage() {
                 </div>
               )}
 
-              {/* Dates */}
               <div className="flex items-center gap-4 text-[10px] text-[var(--text-muted)] font-mono
                               pt-2 border-t border-[var(--border-default)]">
                 <span>
@@ -338,7 +343,7 @@ export default function ReviewerPage() {
               </div>
             </div>
 
-            {/* ── Abstract (plain text with inline comment bar) ─────────── */}
+            {/* ── Abstract ─────────────────────────────────────────────── */}
             <ArticleSection
               title="Abstrak"
               commentCount={commentsBySection["Abstrak"]}
@@ -349,13 +354,13 @@ export default function ReviewerPage() {
               </p>
             </ArticleSection>
 
-            {/* ── RTE sections (Pendahuluan … Referensi) ───────────────── */}
+            {/* ── RTE sections ─────────────────────────────────────────── */}
             {[
-              { title: "Pendahuluan",      sectionKey: "Pendahuluan",       content: article.introduction },
-              { title: "Metodologi",       sectionKey: "Metodologi",        content: article.methodology },
-              { title: "Hasil dan Diskusi",sectionKey: "Hasil dan Diskusi", content: article.results },
-              { title: "Kesimpulan",       sectionKey: "Kesimpulan",        content: article.conclusion },
-              { title: "Referensi",        sectionKey: "Referensi",         content: article.references },
+              { title: "Pendahuluan",       sectionKey: "Pendahuluan",       content: article.introduction },
+              { title: "Metodologi",         sectionKey: "Metodologi",        content: article.methodology },
+              { title: "Hasil dan Diskusi",  sectionKey: "Hasil dan Diskusi", content: article.results },
+              { title: "Kesimpulan",         sectionKey: "Kesimpulan",        content: article.conclusion },
+              { title: "Referensi",          sectionKey: "Referensi",         content: article.references },
             ].map(({ title, sectionKey, content }) => (
               <ArticleSection key={title} title={title}
                 commentCount={commentsBySection[sectionKey]}>
@@ -385,7 +390,131 @@ export default function ReviewerPage() {
           <div className="space-y-4">
             <div className="sticky top-20 space-y-4">
 
-              {/* ADMIN: keputusan editor & assign reviewer */}
+              {/* ══ AUTHOR VIEW ══ */}
+              {isAuthorView && (
+                <>
+                  {/* Status card */}
+                  <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1 h-4 rounded-full bg-gradient-to-b from-ocean-400 to-ocean-600" />
+                      <p className="text-[var(--text-primary)] font-semibold text-sm">Status Artikel</p>
+                    </div>
+
+                    {currentStatus && (
+                      <div className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg border ${currentStatus.cls}`}>
+                        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          {STATUS_ICON[status]}
+                        </svg>
+                        <div>
+                          <p className="text-xs font-semibold">{currentStatus.label}</p>
+                          <p className="text-[10px] opacity-75 mt-0.5">
+                            {status === "REVISION"     && "Editor meminta revisi pada naskah Anda"}
+                            {status === "SUBMITTED"    && "Menunggu ditinjau oleh editor"}
+                            {status === "UNDER_REVIEW" && "Naskah sedang dalam proses peninjauan"}
+                            {status === "ACCEPTED"     && "Selamat! Artikel Anda diterima"}
+                            {status === "REJECTED"     && "Artikel tidak dapat diterima saat ini"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Edit button for revision */}
+                    {status === "REVISION" && (
+                      <a href={`/submit?id=${article.id}`}
+                        className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-sm font-semibold
+                                   bg-ocean-600 hover:bg-ocean-500 text-white transition-colors">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit & Revisi Artikel
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Reviewer note — shown when editor has written feedback */}
+                  {reviewerNote ? (
+                    <div className={`rounded-xl p-4 space-y-2 border
+                                    ${status === "REVISION"
+                                      ? "bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800"
+                                      : status === "REJECTED"
+                                        ? "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800"
+                                        : "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800"
+                                    }`}>
+                      <div className="flex items-center gap-2">
+                        <svg className={`w-3.5 h-3.5 flex-shrink-0
+                                         ${status === "REVISION" ? "text-orange-500 dark:text-orange-400"
+                                           : status === "REJECTED" ? "text-red-500 dark:text-red-400"
+                                           : "text-green-600 dark:text-green-400"}`}
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                        </svg>
+                        <p className={`text-[10px] font-mono uppercase tracking-wider font-semibold
+                                       ${status === "REVISION" ? "text-orange-600 dark:text-orange-400"
+                                         : status === "REJECTED" ? "text-red-600 dark:text-red-400"
+                                         : "text-green-700 dark:text-green-400"}`}>
+                          Catatan dari Editor
+                        </p>
+                      </div>
+                      <p className={`text-sm leading-relaxed whitespace-pre-wrap
+                                     ${status === "REVISION" ? "text-orange-800 dark:text-orange-200"
+                                       : status === "REJECTED" ? "text-red-800 dark:text-red-200"
+                                       : "text-green-800 dark:text-green-200"}`}>
+                        {reviewerNote}
+                      </p>
+                    </div>
+                  ) : (
+                    /* No reviewer note yet */
+                    ["SUBMITTED", "UNDER_REVIEW"].includes(status) && (
+                      <div className="rounded-xl p-4 border border-dashed border-[var(--border-default)]
+                                      bg-[var(--bg-surface-alt)] space-y-1.5">
+                        <p className="text-[10px] font-mono text-[var(--text-muted)] uppercase tracking-wider">
+                          Catatan dari Editor
+                        </p>
+                        <p className="text-xs text-[var(--text-muted)]">
+                          Editor belum memberikan catatan. Anda akan mendapat notifikasi setelah ada keputusan.
+                        </p>
+                      </div>
+                    )
+                  )}
+
+                  {/* Summary of inline comments */}
+                  {comments.length > 0 && (
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-3.5 h-3.5 text-gold-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <p className="text-[var(--text-primary)] font-semibold text-sm">
+                          Ringkasan Komentar
+                        </p>
+                      </div>
+                      <p className="text-xs text-[var(--text-muted)]">
+                        Reviewer memberikan <span className="font-semibold text-[var(--text-primary)]">{comments.length} komentar</span>
+                        {commentedSections.length > 0 && (
+                          <> pada {commentedSections.length} bagian:</>
+                        )}
+                      </p>
+                      {commentedSections.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {commentedSections.map(sec => (
+                            <span key={sec}
+                              className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-mono
+                                          ${SECTION_COLOR[sec] ?? "bg-[var(--bg-surface-alt)] text-[var(--text-muted)] border-[var(--border-default)]"}`}>
+                              {sec}
+                              <span className="font-bold">{commentsBySection[sec]}</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* ══ ADMIN: keputusan editor & assign reviewer ══ */}
               {isAdmin && (
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 space-y-4">
                   <div className="flex items-center gap-2">
@@ -471,7 +600,7 @@ export default function ReviewerPage() {
                 </div>
               )}
 
-              {/* REVIEWER (non-admin): catatan review saja */}
+              {/* ══ REVIEWER (non-admin): catatan review ══ */}
               {!isAdmin && isReviewer && (
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-4 space-y-3">
                   <div className="flex items-center gap-2">
@@ -479,7 +608,6 @@ export default function ReviewerPage() {
                     <p className="text-[var(--text-primary)] font-semibold text-sm">Catatan Review</p>
                   </div>
 
-                  {/* Current status badge (read-only for reviewer) */}
                   {currentStatus && (
                     <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs ${currentStatus.cls}`}>
                       <span className="font-mono">Status saat ini:</span>
@@ -533,7 +661,7 @@ export default function ReviewerPage() {
               {isReviewer && pendingComment && (
                 <div className="rounded-xl p-4 space-y-3
                                 bg-gold-50 border border-gold-200
-                                dark:bg-gold-900/20 dark:border-gold-700/50 animate-scale-in">
+                                dark:bg-gold-900/20 dark:border-gold-700/50">
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] text-gold-600 dark:text-gold-500 uppercase tracking-widest font-mono">
                       Komentar Baru
@@ -584,7 +712,7 @@ export default function ReviewerPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <p className="text-[var(--text-muted)] text-xs font-semibold uppercase tracking-wider">
-                    Komentar
+                    {isAuthorView ? "Komentar Reviewer" : "Komentar"}
                   </p>
                   {comments.length > 0 && (
                     <span className="text-[var(--text-primary)] text-xs font-mono">
@@ -602,9 +730,9 @@ export default function ReviewerPage() {
                             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
                     <p className="text-[var(--text-muted)] text-xs">
-                      {isReviewer
-                        ? "Pilih teks pada artikel lalu klik 💬 Komentar"
-                        : "Belum ada komentar"}
+                      {isAuthorView
+                        ? "Belum ada komentar inline dari reviewer"
+                        : "Pilih teks pada artikel lalu klik 💬 Komentar"}
                     </p>
                   </div>
                 ) : (
@@ -615,7 +743,7 @@ export default function ReviewerPage() {
                       <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1 min-w-0">
                           <span className="text-xs font-medium text-[var(--text-secondary)] block">
-                            {c.reviewerName}
+                            {isAuthorView ? `Reviewer: ${c.reviewerName}` : c.reviewerName}
                           </span>
                           {c.section && (
                             <span className={`inline-block text-[9px] px-1.5 py-0.5 rounded-full border font-mono
@@ -624,7 +752,7 @@ export default function ReviewerPage() {
                             </span>
                           )}
                         </div>
-                        {(isAdmin || currentUser?.name === c.reviewerName) && (
+                        {!isAuthorView && (isAdmin || currentUser?.name === c.reviewerName) && (
                           <button onClick={() => deleteComment(c.id)}
                             title="Hapus komentar"
                             className="text-[var(--text-muted)] hover:text-red-500 transition-colors
@@ -672,8 +800,6 @@ function ArticleSection({
   commentCount?: number
   onAddComment?: (text: string, from: number, to: number) => void
 }) {
-  // For plain-text sections (e.g. Abstrak), this bar is used directly.
-  // For RTE sections, RichTextEditor renders its own comment bar internally.
   const handleBarComment = useCallback(() => {
     if (!onAddComment) return
     const sel = window.getSelection()
@@ -683,16 +809,11 @@ function ArticleSection({
     sel?.removeAllRanges()
   }, [onAddComment])
 
-  // Determine if children contains a RichTextEditor (by checking child type)
-  // For RTE sections, we don't show the bar here since RTE has its own.
-  // We detect this by checking if the child is from RTE or plain.
-  // Simple heuristic: if children is a <p> (string content), show the bar.
   const isPlainText = typeof (children as React.ReactElement)?.type === "string"
     || (children as React.ReactElement)?.type === "p"
 
   return (
     <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl overflow-hidden">
-      {/* Section header */}
       <div className="flex items-center gap-2 px-5 py-3 border-b border-[var(--border-default)]">
         <div className="w-1 h-5 rounded-full bg-gradient-to-b from-ocean-400 to-ocean-600 flex-shrink-0" />
         <h2 className="text-[var(--text-primary)] font-semibold text-sm flex-1">{title}</h2>
@@ -705,7 +826,6 @@ function ArticleSection({
         )}
       </div>
 
-      {/* Comment bar — only for plain-text sections (Abstract) */}
       {isPlainText && onAddComment && (
         <div className="flex items-center gap-2 px-5 py-2
                         bg-[var(--bg-surface)] border-b border-[var(--border-default)]">
