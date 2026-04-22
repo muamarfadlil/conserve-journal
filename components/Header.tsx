@@ -9,7 +9,6 @@ import { useSession, signOut } from "next-auth/react";
 const navLinks = [
   { href: "/", label: "Beranda" },
   { href: "/about", label: "Tentang Jurnal" },
-  { href: "/submit", label: "Submit Artikel" },
 ];
 
 function RoleBadge({ role }: { role: string }) {
