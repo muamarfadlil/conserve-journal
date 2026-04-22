@@ -25,33 +25,48 @@ export default async function HomePage() {
     <>
       <JournalCover issue={latestIssue} />
 
-      <section className="bg-ocean-950 py-14">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Section: Daftar Artikel */}
+      <section className="relative bg-gradient-to-b from-ocean-950 via-ocean-950 to-ocean-900/80 py-16">
+        {/* Subtle radial glow di tengah atas */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-40
+                        bg-ocean-700/10 blur-[80px] pointer-events-none" />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header seksi */}
           <div className="mb-10">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-mono text-ocean-500 uppercase tracking-widest mb-1">
-                  Edisi Volume {latestIssue.volume} · Nomor {latestIssue.issue}
-                </p>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1 h-5 rounded-full bg-gradient-to-b from-ocean-400 to-ocean-600" />
+                  <p className="text-xs font-mono text-ocean-500 uppercase tracking-widest">
+                    Edisi Volume {latestIssue.volume} · Nomor {latestIssue.issue}
+                  </p>
+                </div>
                 <h2 className="font-serif font-bold text-white text-3xl">Daftar Artikel</h2>
                 <p className="text-ocean-400 mt-1.5 text-sm">
                   {latestIssue.month} {latestIssue.year} ·{" "}
-                  <span className="text-gold-400">{latestIssue.articles.length} artikel</span>
+                  <span className="text-gold-400 font-medium">{latestIssue.articles.length} artikel</span>
                 </p>
               </div>
               <a
                 href="#issue-pdf"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ocean-800 hover:bg-ocean-700 border border-ocean-700 text-sm text-ocean-300 hover:text-white transition-all duration-200 self-start sm:self-auto"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
+                           bg-ocean-800/80 hover:bg-ocean-700/80 border border-ocean-700
+                           hover:border-ocean-500 text-sm text-ocean-300 hover:text-white
+                           transition-all duration-200 self-start sm:self-auto backdrop-blur-sm"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <svg className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-200"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Unduh Edisi Lengkap (PDF)
               </a>
             </div>
-            <div className="mt-6 h-px bg-gradient-to-r from-ocean-700 via-ocean-600 to-transparent" />
+            <div className="mt-6 h-px bg-gradient-to-r from-ocean-600 via-ocean-700 to-transparent" />
           </div>
 
+          {/* Grid artikel */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestIssue.articles.map((article, index) => (
               <ArticleCard key={article.id} article={article} index={index} />
@@ -60,17 +75,37 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-ocean-900 to-ocean-800 border-y border-ocean-700">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-ocean-700/50">
+      {/* Section: ISSN & Info */}
+      <section className="relative overflow-hidden
+                          bg-gradient-to-br from-ocean-900 via-ocean-800 to-ocean-900
+                          border-y border-ocean-700/60">
+        {/* Ambient glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-24
+                          bg-ocean-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-3">
             {[
-              { value: "P-ISSN", label: "0000-0001" },
-              { value: "E-ISSN", label: "0000-0000" },
-              { value: "Frekuensi", label: "2 kali setahun" },
-            ].map(({ value, label }) => (
-              <div key={value} className="flex flex-col items-center gap-1 text-ocean-300 py-4 sm:py-0">
-                <p className="text-[10px] text-ocean-500 uppercase tracking-widest font-mono">{value}</p>
-                <p className="font-semibold text-white text-lg">{label}</p>
+              { key: "P-ISSN", value: "0000-0001" },
+              { key: "E-ISSN", value: "0000-0000" },
+              { key: "Frekuensi", value: "2× setahun" },
+            ].map(({ key, value }, i) => (
+              <div
+                key={key}
+                className={`flex flex-col items-center gap-1 py-6 cursor-default
+                            group transition-all duration-200 hover:bg-ocean-700/20
+                            ${i > 0 ? "border-t sm:border-t-0 sm:border-l border-ocean-700/40" : ""}`}
+              >
+                <p className="text-[10px] font-mono text-ocean-500 uppercase tracking-widest
+                              group-hover:text-ocean-400 transition-colors duration-200">
+                  {key}
+                </p>
+                <p className="font-semibold text-white text-xl group-hover:text-gold-400
+                              transition-colors duration-200">
+                  {value}
+                </p>
               </div>
             ))}
           </div>
