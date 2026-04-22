@@ -25,20 +25,20 @@ const ROLE_LABEL: Record<string, string> = {
   USER: "Penulis",
 }
 const ROLE_COLOR: Record<string, string> = {
-  SUPER_ADMIN: "bg-red-900/30 text-red-300 border-red-700",
-  ADMIN: "bg-amber-900/30 text-amber-300 border-amber-700",
-  REVIEWER: "bg-blue-900/30 text-blue-300 border-blue-700",
-  USER: "bg-ocean-900 text-ocean-500 border-ocean-700",
+  SUPER_ADMIN: "bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700",
+  ADMIN:       "bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700",
+  REVIEWER:    "bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700",
+  USER:        "bg-slate-100 text-slate-600 border-slate-300 dark:bg-ocean-900 dark:text-ocean-400 dark:border-ocean-700",
 }
 
 function Modal({ open, title, children, onClose }: { open: boolean; title: string; children: React.ReactNode; onClose: () => void }) {
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-ocean-900 border border-ocean-700 rounded-2xl w-full max-w-md">
-        <div className="flex items-center justify-between p-5 border-b border-ocean-800">
-          <h3 className="text-white font-semibold">{title}</h3>
-          <button onClick={onClose} className="text-ocean-500 hover:text-white transition-colors">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl w-full max-w-md">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--border-default)]">
+          <h3 className="text-[var(--text-primary)] font-semibold">{title}</h3>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -61,8 +61,8 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const inputCls = "w-full px-3 py-2 bg-ocean-800 border border-ocean-700 rounded-lg text-white text-sm placeholder-ocean-600 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:border-transparent transition-colors"
-  const labelCls = "block text-xs text-ocean-400 mb-1"
+  const inputCls = "w-full px-3 py-2 bg-[var(--bg-surface-alt)] border border-[var(--border-default)] rounded-lg text-[var(--text-primary)] text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:border-transparent transition-colors"
+  const labelCls = "block text-xs text-[var(--text-muted)] mb-1"
 
   function openEdit(user: User) {
     setEditForm({ name: user.name, role: user.role, isActive: user.isActive, password: "" })
@@ -74,7 +74,7 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
     e.preventDefault()
     setError("")
     setLoading(true)
-    const res = await fetch("/api/auth/register", {
+    const res = await fetch("/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(createForm),
@@ -142,29 +142,29 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
       </div>
 
       {/* Table */}
-      <div className="bg-ocean-900 border border-ocean-800 rounded-xl overflow-hidden">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ocean-800">
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider">Pengguna</th>
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider hidden sm:table-cell">Peran</th>
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider hidden md:table-cell">Terdaftar</th>
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider hidden sm:table-cell">Status</th>
-                <th className="text-right px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider">Aksi</th>
+              <tr className="border-b border-[var(--border-default)]">
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider">Pengguna</th>
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider hidden sm:table-cell">Peran</th>
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider hidden md:table-cell">Terdaftar</th>
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider hidden sm:table-cell">Status</th>
+                <th className="text-right px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ocean-800">
+            <tbody className="divide-y divide-[var(--border-default)]">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-ocean-800/50 transition-colors">
+                <tr key={user.id} className="hover:bg-[var(--bg-surface-alt)] transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-ocean-700 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-ocean-100 dark:bg-ocean-700 flex items-center justify-center text-xs font-bold text-ocean-700 dark:text-white flex-shrink-0">
                         {user.name[0]?.toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-white font-medium text-sm">{user.name}</p>
-                        <p className="text-ocean-500 text-xs">{user.email}</p>
+                        <p className="text-[var(--text-primary)] font-medium text-sm">{user.name}</p>
+                        <p className="text-[var(--text-muted)] text-xs">{user.email}</p>
                       </div>
                     </div>
                   </td>
@@ -173,7 +173,7 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
                       {ROLE_LABEL[user.role] ?? user.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-ocean-500 text-xs">
+                  <td className="px-4 py-3 hidden md:table-cell text-[var(--text-muted)] text-xs">
                     {new Date(user.createdAt).toLocaleDateString("id-ID")}
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">
@@ -182,8 +182,8 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
                       disabled={user.id === currentUserId}
                       className={`px-2 py-0.5 text-xs rounded-full border transition-colors
                         ${user.isActive
-                          ? "bg-green-900/30 text-green-400 border-green-700 hover:bg-green-900/50"
-                          : "bg-ocean-900 text-ocean-500 border-ocean-700 hover:bg-ocean-800"
+                          ? "bg-green-100 text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700 hover:opacity-80"
+                          : "bg-[var(--bg-surface-alt)] text-[var(--text-muted)] border-[var(--border-default)] hover:border-ocean-400"
                         } ${user.id === currentUserId ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
                     >
                       {user.isActive ? "Aktif" : "Nonaktif"}
@@ -193,7 +193,7 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEdit(user)}
-                        className="p-1.5 text-ocean-400 hover:text-white hover:bg-ocean-700 rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)] rounded-lg transition-colors"
                         title="Edit"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -204,7 +204,7 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
                       {user.id !== currentUserId && (
                         <button
                           onClick={() => setDeleteModal({ open: true, user })}
-                          className="p-1.5 text-red-500 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
+                          className="p-1.5 text-red-500 hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                           title="Hapus"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -225,7 +225,7 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
       {/* Create Modal */}
       <Modal open={createModal} title="Tambah Pengguna Baru" onClose={() => setCreateModal(false)}>
         <form onSubmit={handleCreate} className="space-y-4">
-          {error && <div className="p-3 rounded-lg bg-red-900/30 border border-red-700 text-red-400 text-sm">{error}</div>}
+          {error && <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 text-sm">{error}</div>}
           <div>
             <label className={labelCls}>Nama Lengkap *</label>
             <input className={inputCls} value={createForm.name} onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))} required placeholder="Nama lengkap" />
@@ -245,7 +245,7 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
             </select>
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setCreateModal(false)} className="px-4 py-2 text-sm text-ocean-400 hover:text-white hover:bg-ocean-800 rounded-lg transition-colors">Batal</button>
+            <button type="button" onClick={() => setCreateModal(false)} className="px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)] rounded-lg transition-colors">Batal</button>
             <button type="submit" disabled={loading} className="px-4 py-2 text-sm bg-gold-500 hover:bg-gold-400 text-ocean-950 font-semibold rounded-lg transition-colors disabled:opacity-50">
               {loading ? "Membuat..." : "Buat Pengguna"}
             </button>
@@ -256,7 +256,7 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
       {/* Edit Modal */}
       <Modal open={editModal.open} title="Edit Pengguna" onClose={() => setEditModal({ open: false, user: null })}>
         <form onSubmit={handleEdit} className="space-y-4">
-          {error && <div className="p-3 rounded-lg bg-red-900/30 border border-red-700 text-red-400 text-sm">{error}</div>}
+          {error && <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 text-sm">{error}</div>}
           <div>
             <label className={labelCls}>Nama Lengkap *</label>
             <input className={inputCls} value={editForm.name} onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))} required />
@@ -268,15 +268,15 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
             </select>
           </div>
           <div className="flex items-center gap-3">
-            <input type="checkbox" id="isActive" checked={editForm.isActive} onChange={(e) => setEditForm((f) => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded bg-ocean-800 border-ocean-700" />
-            <label htmlFor="isActive" className="text-sm text-ocean-300">Akun aktif</label>
+            <input type="checkbox" id="isActive" checked={editForm.isActive} onChange={(e) => setEditForm((f) => ({ ...f, isActive: e.target.checked }))} className="w-4 h-4 rounded bg-[var(--bg-surface-alt)] border-[var(--border-default)]" />
+            <label htmlFor="isActive" className="text-sm text-[var(--text-secondary)]">Akun aktif</label>
           </div>
           <div>
             <label className={labelCls}>Password baru (kosongkan jika tidak diubah)</label>
             <input type="password" className={inputCls} value={editForm.password} onChange={(e) => setEditForm((f) => ({ ...f, password: e.target.value }))} placeholder="••••••••" />
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setEditModal({ open: false, user: null })} className="px-4 py-2 text-sm text-ocean-400 hover:text-white hover:bg-ocean-800 rounded-lg transition-colors">Batal</button>
+            <button type="button" onClick={() => setEditModal({ open: false, user: null })} className="px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)] rounded-lg transition-colors">Batal</button>
             <button type="submit" disabled={loading} className="px-4 py-2 text-sm bg-gold-500 hover:bg-gold-400 text-ocean-950 font-semibold rounded-lg transition-colors disabled:opacity-50">
               {loading ? "Menyimpan..." : "Simpan Perubahan"}
             </button>
@@ -286,13 +286,13 @@ export default function UsersTable({ users, currentUserId }: UsersTableProps) {
 
       {/* Delete Confirm Modal */}
       <Modal open={deleteModal.open} title="Hapus Pengguna" onClose={() => setDeleteModal({ open: false, user: null })}>
-        <p className="text-ocean-300 text-sm mb-1">Pengguna berikut akan dihapus secara permanen:</p>
-        <div className="p-3 bg-ocean-800 rounded-lg mb-6">
-          <p className="text-white font-medium text-sm">{deleteModal.user?.name}</p>
-          <p className="text-ocean-500 text-xs">{deleteModal.user?.email}</p>
+        <p className="text-[var(--text-secondary)] text-sm mb-1">Pengguna berikut akan dihapus secara permanen:</p>
+        <div className="p-3 bg-[var(--bg-surface-alt)] border border-[var(--border-default)] rounded-lg mb-6">
+          <p className="text-[var(--text-primary)] font-medium text-sm">{deleteModal.user?.name}</p>
+          <p className="text-[var(--text-muted)] text-xs">{deleteModal.user?.email}</p>
         </div>
         <div className="flex justify-end gap-3">
-          <button onClick={() => setDeleteModal({ open: false, user: null })} className="px-4 py-2 text-sm text-ocean-400 hover:text-white hover:bg-ocean-800 rounded-lg transition-colors">Batal</button>
+          <button onClick={() => setDeleteModal({ open: false, user: null })} className="px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)] rounded-lg transition-colors">Batal</button>
           <button onClick={handleDelete} disabled={loading} className="px-4 py-2 text-sm bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg transition-colors disabled:opacity-50">
             {loading ? "Menghapus..." : "Hapus"}
           </button>

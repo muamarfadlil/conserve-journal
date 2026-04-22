@@ -41,9 +41,9 @@ export default async function ArticlesPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-white">Kelola Artikel</h1>
-        <p className="text-ocean-400 text-sm mt-1">
-          Total <span className="text-white font-medium">{total}</span> artikel
+        <h1 className="text-2xl font-serif font-bold text-[var(--text-primary)]">Kelola Artikel</h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">
+          Total <span className="text-[var(--text-primary)] font-medium">{total}</span> artikel
         </p>
       </div>
 

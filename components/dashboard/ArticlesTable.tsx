@@ -44,10 +44,10 @@ function Modal({
   if (!open) return null
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-ocean-900 border border-ocean-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between p-5 border-b border-ocean-800">
-          <h3 className="text-white font-semibold">{title}</h3>
-          <button onClick={onClose} className="text-ocean-500 hover:text-white transition-colors">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--border-default)]">
+          <h3 className="text-[var(--text-primary)] font-semibold">{title}</h3>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -208,8 +208,8 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
   }
 
   const inputCls =
-    "w-full px-3 py-2 bg-ocean-800 border border-ocean-700 rounded-lg text-white text-sm placeholder-ocean-600 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:border-transparent transition-colors"
-  const labelCls = "block text-xs text-ocean-400 mb-1"
+    "w-full px-3 py-2 bg-[var(--bg-surface-alt)] border border-[var(--border-default)] rounded-lg text-[var(--text-primary)] text-sm placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-ocean-400 focus:border-transparent transition-colors"
+  const labelCls = "block text-xs text-[var(--text-muted)] mb-1"
 
   return (
     <>
@@ -227,45 +227,45 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
       </div>
 
       {/* Table */}
-      <div className="bg-ocean-900 border border-ocean-800 rounded-xl overflow-hidden">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ocean-800">
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider">Judul</th>
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider hidden md:table-cell">Volume</th>
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider hidden lg:table-cell">Kategori</th>
-                <th className="text-left px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider hidden lg:table-cell">Penulis</th>
-                <th className="text-right px-4 py-3 text-ocean-400 font-medium text-xs uppercase tracking-wider">Aksi</th>
+              <tr className="border-b border-[var(--border-default)]">
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider">Judul</th>
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider hidden md:table-cell">Volume</th>
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider hidden lg:table-cell">Kategori</th>
+                <th className="text-left px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider hidden lg:table-cell">Penulis</th>
+                <th className="text-right px-4 py-3 text-[var(--text-muted)] font-medium text-xs uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ocean-800">
+            <tbody className="divide-y divide-[var(--border-default)]">
               {articles.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center py-12 text-ocean-500">
+                  <td colSpan={5} className="text-center py-12 text-[var(--text-muted)]">
                     Belum ada artikel.
                   </td>
                 </tr>
               )}
               {articles.map((article) => (
-                <tr key={article.id} className="hover:bg-ocean-800/50 transition-colors">
+                <tr key={article.id} className="hover:bg-[var(--bg-surface-alt)] transition-colors">
                   <td className="px-4 py-3">
-                    <p className="text-white font-medium line-clamp-2 max-w-xs">{article.title}</p>
+                    <p className="text-[var(--text-primary)] font-medium line-clamp-2 max-w-xs">{article.title}</p>
                     {article.doi && (
-                      <p className="text-ocean-600 text-xs mt-0.5">DOI: {article.doi}</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-0.5">DOI: {article.doi}</p>
                     )}
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-ocean-400 whitespace-nowrap">
+                  <td className="px-4 py-3 hidden md:table-cell text-[var(--text-secondary)] whitespace-nowrap">
                     Vol {article.volume.number} No {article.volume.issue} ({article.volume.year})
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell">
                     {article.category && (
-                      <span className="px-2 py-0.5 bg-ocean-800 text-ocean-300 text-xs rounded-full">
+                      <span className="px-2 py-0.5 bg-[var(--bg-surface-alt)] text-[var(--text-secondary)] text-xs rounded-full border border-[var(--border-default)]">
                         {article.category}
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 hidden lg:table-cell text-ocean-400 text-xs">
+                  <td className="px-4 py-3 hidden lg:table-cell text-[var(--text-secondary)] text-xs">
                     {article.authors.slice(0, 2).map((a) => a.name).join(", ")}
                     {article.authors.length > 2 && ` +${article.authors.length - 2}`}
                   </td>
@@ -273,7 +273,7 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEdit(article)}
-                        className="p-1.5 text-ocean-400 hover:text-white hover:bg-ocean-700 rounded-lg transition-colors"
+                        className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)] rounded-lg transition-colors"
                         title="Edit"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -283,7 +283,7 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
                       </button>
                       <button
                         onClick={() => setDeleteModal({ open: true, article })}
-                        className="p-1.5 text-red-500 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
+                        className="p-1.5 text-red-500 hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                         title="Hapus"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -301,15 +301,15 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="border-t border-ocean-800 px-4 py-3 flex items-center justify-between">
-            <p className="text-ocean-500 text-xs">
+          <div className="border-t border-[var(--border-default)] px-4 py-3 flex items-center justify-between">
+            <p className="text-[var(--text-muted)] text-xs">
               Halaman {page} dari {totalPages}
             </p>
             <div className="flex gap-2">
               {page > 1 && (
                 <a
                   href={`?page=${page - 1}`}
-                  className="px-3 py-1.5 bg-ocean-800 text-ocean-300 text-xs rounded-lg hover:bg-ocean-700 transition-colors"
+                  className="px-3 py-1.5 bg-[var(--bg-surface-alt)] text-[var(--text-secondary)] text-xs rounded-lg border border-[var(--border-default)] hover:border-ocean-400 transition-colors"
                 >
                   Sebelumnya
                 </a>
@@ -317,7 +317,7 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
               {page < totalPages && (
                 <a
                   href={`?page=${page + 1}`}
-                  className="px-3 py-1.5 bg-ocean-800 text-ocean-300 text-xs rounded-lg hover:bg-ocean-700 transition-colors"
+                  className="px-3 py-1.5 bg-[var(--bg-surface-alt)] text-[var(--text-secondary)] text-xs rounded-lg border border-[var(--border-default)] hover:border-ocean-400 transition-colors"
                 >
                   Berikutnya
                 </a>
@@ -335,7 +335,7 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 rounded-lg bg-red-900/30 border border-red-700 text-red-400 text-sm">
+            <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 text-sm">
               {error}
             </div>
           )}
@@ -401,7 +401,7 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className={labelCls + " mb-0"}>Penulis *</label>
-              <button type="button" onClick={addAuthor} className="text-xs text-ocean-400 hover:text-white transition-colors">
+              <button type="button" onClick={addAuthor} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
                 + Tambah penulis
               </button>
             </div>
@@ -427,7 +427,7 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
 
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setFormModal({ open: false, article: null })}
-              className="px-4 py-2 text-sm text-ocean-400 hover:text-white hover:bg-ocean-800 rounded-lg transition-colors">
+              className="px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)] rounded-lg transition-colors">
               Batal
             </button>
             <button type="submit" disabled={loading}
@@ -444,13 +444,13 @@ export default function ArticlesTable({ articles, volumes, total, page, limit }:
         title="Hapus Artikel"
         onClose={() => setDeleteModal({ open: false, article: null })}
       >
-        <p className="text-ocean-300 text-sm mb-1">Artikel berikut akan dihapus secara permanen:</p>
-        <p className="text-white font-medium text-sm mb-6 p-3 bg-ocean-800 rounded-lg">
+        <p className="text-[var(--text-secondary)] text-sm mb-1">Artikel berikut akan dihapus secara permanen:</p>
+        <p className="text-[var(--text-primary)] font-medium text-sm mb-6 p-3 bg-[var(--bg-surface-alt)] rounded-lg border border-[var(--border-default)]">
           {deleteModal.article?.title}
         </p>
         <div className="flex justify-end gap-3">
           <button onClick={() => setDeleteModal({ open: false, article: null })}
-            className="px-4 py-2 text-sm text-ocean-400 hover:text-white hover:bg-ocean-800 rounded-lg transition-colors">
+            className="px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)] rounded-lg transition-colors">
             Batal
           </button>
           <button onClick={handleDelete} disabled={loading}

@@ -1,10 +1,16 @@
-// app/api/debug/route.ts — SEMENTARA untuk diagnosa, hapus setelah selesai
 import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export const dynamic = "force-dynamic"
 
 export async function GET() {
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
   const result: Record<string, unknown> = {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "NOT SET",
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? "SET ✓" : "NOT SET ✗",

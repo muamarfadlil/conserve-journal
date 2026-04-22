@@ -4,12 +4,12 @@ import { useState, useMemo } from "react"
 import Link from "next/link"
 
 const STATUS_CONFIG = {
-  DRAFT:        { label: "Draft",    cls: "bg-ocean-900 text-ocean-400 border-ocean-700" },
-  SUBMITTED:    { label: "Menunggu", cls: "bg-blue-900/40 text-blue-400 border-blue-700" },
-  UNDER_REVIEW: { label: "Ditinjau", cls: "bg-amber-900/40 text-amber-400 border-amber-700" },
-  REVISION:     { label: "Revisi",   cls: "bg-orange-900/40 text-orange-400 border-orange-700" },
-  ACCEPTED:     { label: "Diterima", cls: "bg-green-900/40 text-green-400 border-green-700" },
-  REJECTED:     { label: "Ditolak",  cls: "bg-red-900/40 text-red-400 border-red-700" },
+  DRAFT:        { label: "Draft",    cls: "bg-slate-100 text-slate-600 border-slate-300 dark:bg-ocean-900 dark:text-ocean-400 dark:border-ocean-700" },
+  SUBMITTED:    { label: "Menunggu", cls: "bg-blue-100 text-blue-600 border-blue-300 dark:bg-blue-900/40 dark:text-blue-400 dark:border-blue-700" },
+  UNDER_REVIEW: { label: "Ditinjau", cls: "bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/40 dark:text-amber-400 dark:border-amber-700" },
+  REVISION:     { label: "Revisi",   cls: "bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/40 dark:text-orange-400 dark:border-orange-700" },
+  ACCEPTED:     { label: "Diterima", cls: "bg-green-100 text-green-700 border-green-300 dark:bg-green-900/40 dark:text-green-400 dark:border-green-700" },
+  REJECTED:     { label: "Ditolak",  cls: "bg-red-100 text-red-700 border-red-300 dark:bg-red-900/40 dark:text-red-400 dark:border-red-700" },
 } as const
 
 type Submission = {
@@ -58,11 +58,12 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
     <div>
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
-        <h2 className="text-white font-semibold flex items-center gap-2">
+        <h2 className="text-[var(--text-primary)] font-semibold flex items-center gap-2">
           Daftar Submission
           {waiting > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-900/50 text-blue-400
-                             border border-blue-700 font-mono">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-mono
+                             bg-blue-100 text-blue-600 border border-blue-300
+                             dark:bg-blue-900/50 dark:text-blue-400 dark:border-blue-700">
               {waiting} baru
             </span>
           )}
@@ -71,7 +72,7 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Search */}
           <div className="relative flex-1 sm:w-52">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ocean-600"
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)]"
                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -81,9 +82,10 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Cari judul atau penulis…"
-              className="w-full pl-8 pr-3 py-1.5 bg-ocean-800 border border-ocean-700 rounded-lg
-                         text-xs text-white placeholder-ocean-600 focus:outline-none
-                         focus:ring-2 focus:ring-ocean-500 focus:border-transparent"
+              className="w-full pl-8 pr-3 py-1.5 rounded-lg text-xs focus:outline-none
+                         bg-[var(--bg-surface-alt)] border border-[var(--border-default)]
+                         text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
+                         focus:border-ocean-400"
             />
           </div>
 
@@ -91,8 +93,9 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            className="px-2 py-1.5 bg-ocean-800 border border-ocean-700 rounded-lg
-                       text-xs text-white focus:outline-none focus:ring-2 focus:ring-ocean-500"
+            className="px-2 py-1.5 rounded-lg text-xs focus:outline-none
+                       bg-[var(--bg-surface-alt)] border border-[var(--border-default)]
+                       text-[var(--text-primary)] focus:border-ocean-400"
           >
             {STATUS_FILTER_OPTIONS.map(o => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -103,8 +106,9 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
 
       {/* Results */}
       {filtered.length === 0 ? (
-        <div className="text-center py-12 bg-ocean-900/20 border border-dashed border-ocean-800 rounded-xl">
-          <p className="text-ocean-500 text-sm">
+        <div className="text-center py-12 rounded-xl border border-dashed
+                        bg-[var(--bg-surface-alt)] border-[var(--border-default)]">
+          <p className="text-[var(--text-muted)] text-sm">
             {query || statusFilter !== "all"
               ? "Tidak ada submission yang cocok"
               : privileged ? "Belum ada submission masuk" : "Belum ada submission yang ditugaskan kepada Anda"}
@@ -112,7 +116,7 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
           {(query || statusFilter !== "all") && (
             <button
               onClick={() => { setQuery(""); setStatusFilter("all") }}
-              className="mt-2 text-xs text-ocean-400 hover:text-white underline"
+              className="mt-2 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] underline"
             >
               Reset filter
             </button>
@@ -126,13 +130,14 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
               <Link
                 key={s.id}
                 href={`/reviewer/${s.id}`}
-                className="flex items-center gap-3 p-4 bg-ocean-900/30 border border-ocean-800
-                           hover:border-ocean-600 hover:bg-ocean-900/60 rounded-xl
-                           transition-all duration-200 group"
+                className="flex items-center gap-3 p-4 rounded-xl transition-all duration-200 group
+                           bg-[var(--bg-surface)] border border-[var(--border-default)]
+                           hover:border-ocean-400 dark:hover:border-ocean-600"
               >
-                <div className="w-10 h-10 rounded-lg bg-ocean-800 border border-ocean-700
-                                flex items-center justify-center text-xs font-bold text-ocean-400
-                                flex-shrink-0 font-mono group-hover:border-ocean-600 transition-colors">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0
+                                text-xs font-bold font-mono transition-colors
+                                bg-[var(--bg-surface-alt)] border border-[var(--border-default)]
+                                text-[var(--text-muted)] group-hover:border-ocean-400">
                   {String(s.id).padStart(3, "0")}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -141,33 +146,34 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
                       {cfg.label}
                     </span>
                     {s.assignedReviewer ? (
-                      <span className="text-[10px] text-ocean-600 font-mono">
+                      <span className="text-[10px] text-[var(--text-muted)] font-mono">
                         → {s.assignedReviewer.name}
                       </span>
                     ) : (
                       privileged && (
-                        <span className="text-[10px] text-ocean-700 font-mono italic">belum di-assign</span>
+                        <span className="text-[10px] text-[var(--text-muted)] font-mono italic">
+                          belum di-assign
+                        </span>
                       )
                     )}
                   </div>
-                  <p className="text-white text-sm font-medium line-clamp-1
-                                group-hover:text-ocean-200 transition-colors">
+                  <p className="text-[var(--text-primary)] text-sm font-medium line-clamp-1">
                     {s.title}
                   </p>
-                  <p className="text-ocean-500 text-xs mt-0.5">
+                  <p className="text-[var(--text-muted)] text-xs mt-0.5">
                     {s.author}
                     {privileged && ` · ${s.submittedBy.email}`}
                   </p>
                 </div>
                 <div className="text-right hidden sm:block flex-shrink-0">
-                  <p className="text-ocean-600 text-[10px]">Diperbarui</p>
-                  <p className="text-ocean-400 text-xs">
+                  <p className="text-[var(--text-muted)] text-[10px]">Diperbarui</p>
+                  <p className="text-[var(--text-secondary)] text-xs">
                     {new Date(s.updatedAt).toLocaleDateString("id-ID", {
                       day: "numeric", month: "short",
                     })}
                   </p>
                 </div>
-                <svg className="w-4 h-4 text-ocean-700 group-hover:text-ocean-400 flex-shrink-0 transition-colors"
+                <svg className="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--text-primary)] flex-shrink-0 transition-colors"
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -175,7 +181,7 @@ export default function ReviewerSubmissionList({ submissions, privileged }: Prop
             )
           })}
           {filtered.length < submissions.length && (
-            <p className="text-center text-ocean-600 text-xs pt-1">
+            <p className="text-center text-[var(--text-muted)] text-xs pt-1">
               Menampilkan {filtered.length} dari {submissions.length} submission
             </p>
           )}

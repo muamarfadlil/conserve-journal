@@ -58,22 +58,41 @@ export default async function ReviewerDashboardPage() {
     total:     submissions.length,
     waiting:   submissions.filter(s => s.status === "SUBMITTED").length,
     reviewing: submissions.filter(s => s.status === "UNDER_REVIEW").length,
-    revision:  submissions.filter(s => s.status === "REVISION").length,
     done:      submissions.filter(s => ["ACCEPTED", "REJECTED"].includes(s.status)).length,
   }
 
   const statCards = [
-    { label: "Total",           value: counts.total,     color: "text-ocean-400", bg: "bg-ocean-800/60",  border: "border-ocean-700" },
-    { label: "Menunggu",        value: counts.waiting,   color: "text-blue-400",  bg: "bg-blue-900/30",   border: "border-blue-800" },
-    { label: "Sedang Ditinjau", value: counts.reviewing, color: "text-amber-400", bg: "bg-amber-900/30",  border: "border-amber-800" },
-    { label: "Selesai",         value: counts.done,      color: "text-green-400", bg: "bg-green-900/30",  border: "border-green-800" },
+    {
+      label: "Total", value: counts.total,
+      color: "text-ocean-600 dark:text-ocean-400",
+      bg: "bg-ocean-100 dark:bg-ocean-800/60",
+      border: "border-ocean-300 dark:border-ocean-700",
+    },
+    {
+      label: "Menunggu", value: counts.waiting,
+      color: "text-blue-600 dark:text-blue-400",
+      bg: "bg-blue-100 dark:bg-blue-900/30",
+      border: "border-blue-300 dark:border-blue-800",
+    },
+    {
+      label: "Sedang Ditinjau", value: counts.reviewing,
+      color: "text-amber-600 dark:text-amber-400",
+      bg: "bg-amber-100 dark:bg-amber-900/30",
+      border: "border-amber-300 dark:border-amber-800",
+    },
+    {
+      label: "Selesai", value: counts.done,
+      color: "text-green-600 dark:text-green-400",
+      bg: "bg-green-100 dark:bg-green-900/30",
+      border: "border-green-300 dark:border-green-800",
+    },
   ]
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-serif font-bold text-white">Panel Reviewer</h1>
-        <p className="text-ocean-400 text-sm mt-1">
+        <h1 className="text-2xl font-serif font-bold text-[var(--text-primary)]">Panel Reviewer</h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">
           {privileged
             ? "Semua submission masuk — tinjau, assign reviewer, dan tetapkan keputusan."
             : "Submission yang ditugaskan kepada Anda untuk ditinjau."}
@@ -85,9 +104,8 @@ export default async function ReviewerDashboardPage() {
         {statCards.map((s) => (
           <div
             key={s.label}
-            className={`bg-ocean-900/40 border rounded-xl p-4
-                        hover:border-opacity-80 hover:-translate-y-0.5
-                        transition-all duration-200 ${s.border}`}
+            className={`bg-[var(--bg-surface)] border rounded-xl p-4
+                        hover:-translate-y-0.5 transition-all duration-200 ${s.border}`}
           >
             <div className={`inline-flex p-2 rounded-lg ${s.bg} ${s.color} mb-2`}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,12 +114,11 @@ export default async function ReviewerDashboardPage() {
               </svg>
             </div>
             <p className={`text-2xl font-bold tabular-nums ${s.color}`}>{s.value}</p>
-            <p className="text-ocean-500 text-xs mt-0.5">{s.label}</p>
+            <p className="text-[var(--text-muted)] text-xs mt-0.5">{s.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Searchable submission list (client component) */}
       <ReviewerSubmissionList submissions={submissions} privileged={privileged} />
     </div>
   )

@@ -1,18 +1,33 @@
-// app/api/auth/register/route.ts
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
-import { getSession, isAdmin } from "@/lib/auth"
+import { rateLimit } from "@/lib/rate-limit"
 
 const registerSchema = z.object({
   name: z.string().min(2, "Nama minimal 2 karakter").max(100),
-  email: z.string().email("Email tidak valid"),
-  password: z.string().min(8, "Password minimal 8 karakter"),
-  role: z.enum(["USER", "REVIEWER", "ADMIN", "SUPER_ADMIN"]).optional().default("USER"),
+  email: z.string().email("Email tidak valid").max(255),
+  password: z.string().min(8, "Password minimal 8 karakter").max(128),
 })
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 registrations per IP per 15 minutes
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown"
+  const rl = rateLimit(`register:${ip}`, 5, 15 * 60 * 1000)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Terlalu banyak percobaan. Coba lagi nanti." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          "X-RateLimit-Limit": "5",
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    )
+  }
+
   try {
     const body = await req.json()
     const parsed = registerSchema.safeParse(body)
@@ -24,25 +39,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { name, email, password, role } = parsed.data
+    const { name, email, password } = parsed.data
 
-    // Hanya ADMIN/SUPER_ADMIN yang bisa membuat akun ADMIN/SUPER_ADMIN
-    if (role !== "USER") {
-      const session = await getSession().catch(() => null)
-      if (!session || !isAdmin(session.user.role)) {
-        return NextResponse.json(
-          { error: "Tidak memiliki izin untuk membuat akun dengan peran ini" },
-          { status: 403 }
-        )
-      }
-      // Hanya SUPER_ADMIN yang bisa membuat SUPER_ADMIN
-      if (role === "SUPER_ADMIN" && session.user.role !== "SUPER_ADMIN") {
-        return NextResponse.json(
-          { error: "Hanya Super Admin yang dapat membuat akun Super Admin" },
-          { status: 403 }
-        )
-      }
-    }
+    // Public registration always creates USER role — no privilege escalation possible
+    const role = "USER" as const
 
     const existing = await prisma.user.findUnique({ where: { email } })
     if (existing) {
@@ -61,9 +61,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Akun berhasil dibuat", user }, { status: 201 })
   } catch (err) {
     console.error("[register] error:", err)
-    return NextResponse.json({
-      error: "Terjadi kesalahan server",
-      detail: err instanceof Error ? err.message : String(err)
-    }, { status: 500 })
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 })
   }
 }

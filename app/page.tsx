@@ -15,8 +15,8 @@ export default async function HomePage() {
 
   if (!latestIssue) {
     return (
-      <div className="bg-ocean-950 min-h-screen flex items-center justify-center">
-        <p className="text-ocean-400">Belum ada artikel yang dipublikasikan.</p>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-base)]">
+        <p className="text-[var(--text-muted)]">Belum ada artikel yang dipublikasikan.</p>
       </div>
     );
   }
@@ -52,9 +52,12 @@ export default async function HomePage() {
               <a
                 href="#issue-pdf"
                 className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
-                           bg-ocean-800/80 hover:bg-ocean-700/80 border border-ocean-700
-                           hover:border-ocean-500 text-sm text-ocean-300 hover:text-white
-                           transition-all duration-200 self-start sm:self-auto backdrop-blur-sm"
+                           bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-alt)]
+                           border border-[var(--border-default)] hover:border-ocean-400
+                           dark:bg-ocean-800/80 dark:hover:bg-ocean-700/80 dark:border-ocean-700 dark:hover:border-ocean-500
+                           text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]
+                           dark:text-ocean-300 dark:hover:text-white
+                           transition-all duration-200 self-start sm:self-auto"
               >
                 <svg className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-200"
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">

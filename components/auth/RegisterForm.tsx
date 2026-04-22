@@ -23,10 +23,10 @@ function PasswordStrength({ password }: { password: string }) {
 
   return (
     <div className="mt-2 space-y-1">
-      <div className="h-1 w-full bg-ocean-800 rounded-full overflow-hidden">
+      <div className="h-1 w-full bg-[var(--bg-surface-alt)] rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all duration-500 ${level.color} ${level.width}`} />
       </div>
-      <p className="text-[10px] text-ocean-500">{level.label}</p>
+      <p className="text-[10px] text-[var(--text-muted)]">{level.label}</p>
     </div>
   )
 }
@@ -76,11 +76,7 @@ export default function RegisterForm() {
     setTimeout(() => router.push("/login"), 2000)
   }
 
-  const inputCls = `w-full px-4 py-2.5 bg-ocean-800/70 border border-ocean-700/60 rounded-xl
-                   text-white placeholder-ocean-600 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-ocean-500/60
-                   focus:border-ocean-500/40 focus:bg-ocean-800
-                   hover:border-ocean-600/60 transition-all duration-200`
+  const inputCls = "input-auth"
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -105,7 +101,7 @@ export default function RegisterForm() {
       )}
 
       <div className="space-y-1.5">
-        <label className="block text-xs text-ocean-400 font-medium" htmlFor="name">
+        <label className="block text-xs text-[var(--text-muted)] font-medium" htmlFor="name">
           Nama Lengkap
         </label>
         <input
@@ -116,7 +112,7 @@ export default function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs text-ocean-400 font-medium" htmlFor="email">
+        <label className="block text-xs text-[var(--text-muted)] font-medium" htmlFor="email">
           Alamat Email
         </label>
         <input
@@ -127,9 +123,9 @@ export default function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs text-ocean-400 font-medium" htmlFor="password">
+        <label className="block text-xs text-[var(--text-muted)] font-medium" htmlFor="password">
           Password
-          <span className="text-ocean-600 font-normal ml-1">(min. 8 karakter)</span>
+          <span className="text-[var(--text-muted)] font-normal ml-1">(min. 8 karakter)</span>
         </label>
         <div className="relative">
           <input
@@ -146,7 +142,7 @@ export default function RegisterForm() {
             tabIndex={-1}
             aria-label={showPass ? "Sembunyikan" : "Tampilkan"}
             className="absolute right-3 top-1/2 -translate-y-1/2
-                       text-ocean-600 hover:text-ocean-300 transition-colors"
+                       text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {showPass ? (
@@ -167,7 +163,7 @@ export default function RegisterForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-xs text-ocean-400 font-medium" htmlFor="confirm">
+        <label className="block text-xs text-[var(--text-muted)] font-medium" htmlFor="confirm">
           Konfirmasi Password
         </label>
         <input
@@ -193,7 +189,8 @@ export default function RegisterForm() {
         disabled={loading}
         className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm mt-2
                    bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300
-                   disabled:from-ocean-700 disabled:to-ocean-700 disabled:text-ocean-500
+                   disabled:from-slate-300 disabled:to-slate-300 dark:disabled:from-ocean-700 dark:disabled:to-ocean-700
+                   disabled:text-slate-500 dark:disabled:text-ocean-500
                    text-ocean-950 transition-all duration-200
                    hover:shadow-lg hover:shadow-gold-500/20 hover:-translate-y-0.5
                    active:translate-y-0 flex items-center justify-center gap-2"
