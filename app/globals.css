@@ -144,6 +144,127 @@
   .border-theme       { border-color: var(--border-default); }
 }
 
+/* ── Rich Text Editor (Tiptap) ──────────────────────────────────────────── */
+
+/* Placeholder text */
+.rte-content .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  opacity: 0.55;
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* Prose content typography — theme-aware */
+.rte-content .ProseMirror {
+  color: var(--text-primary);
+  line-height: 1.75;
+  font-size: 0.875rem;
+}
+
+.rte-content .ProseMirror h1,
+.rte-content .ProseMirror h2,
+.rte-content .ProseMirror h3,
+.rte-content .ProseMirror h4 {
+  color: var(--text-primary);
+  font-family: var(--font-playfair);
+  font-weight: 700;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+.rte-content .ProseMirror h2 { font-size: 1.15rem; }
+.rte-content .ProseMirror h3 { font-size: 1rem; }
+
+.rte-content .ProseMirror p { margin-bottom: 0.75em; }
+
+.rte-content .ProseMirror strong { color: var(--text-primary); font-weight: 700; }
+.rte-content .ProseMirror em    { color: var(--text-secondary); }
+
+.rte-content .ProseMirror a {
+  color: #0d9488;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.rte-content .ProseMirror a:hover { color: #14b8a6; }
+
+.rte-content .ProseMirror ul,
+.rte-content .ProseMirror ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75em;
+}
+.rte-content .ProseMirror ul { list-style-type: disc; }
+.rte-content .ProseMirror ol { list-style-type: decimal; }
+.rte-content .ProseMirror li { margin-bottom: 0.25em; color: var(--text-primary); }
+
+.rte-content .ProseMirror blockquote {
+  border-left: 3px solid var(--border-default);
+  padding-left: 1rem;
+  margin-left: 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.rte-content .ProseMirror code {
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.8em;
+  font-family: 'Courier New', monospace;
+  color: var(--text-primary);
+}
+
+.rte-content .ProseMirror pre {
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-default);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+.rte-content .ProseMirror pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Table */
+.rte-content .ProseMirror table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+  font-size: 0.8125rem;
+}
+.rte-content .ProseMirror td,
+.rte-content .ProseMirror th {
+  border: 1px solid var(--border-default);
+  padding: 0.4rem 0.6rem;
+  color: var(--text-primary);
+  text-align: left;
+}
+.rte-content .ProseMirror th {
+  background-color: var(--bg-surface-alt);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.rte-content .ProseMirror tr:nth-child(even) td {
+  background-color: var(--bg-surface);
+}
+
+/* Image */
+.rte-content .ProseMirror img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 0.5em 0;
+  border: 1px solid var(--border-default);
+}
+
+/* Selected text */
+.rte-content .ProseMirror ::selection {
+  background-color: var(--selection-bg);
+}
+
 /* ── Selection ──────────────────────────────────────────────────────────── */
 ::selection {
   background-color: var(--selection-bg);
