@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SessionProvider from "@/components/SessionProvider";
+import { ToastProvider } from "@/components/ui/Toast";
 import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -37,10 +38,22 @@ export default async function RootLayout({
   return (
     <html lang="id">
       <body className="flex flex-col min-h-screen bg-ocean-950">
+        {/* Skip to main content for keyboard users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[400]
+                     focus:px-4 focus:py-2 focus:bg-gold-500 focus:text-ocean-950
+                     focus:font-semibold focus:rounded-lg focus:text-sm"
+        >
+          Langsung ke konten
+        </a>
+
         <SessionProvider session={session}>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <ToastProvider>
+            <Header />
+            <main id="main-content" className="flex-1">{children}</main>
+            <Footer />
+          </ToastProvider>
         </SessionProvider>
       </body>
     </html>

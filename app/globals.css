@@ -1,78 +1,72 @@
-/* ============================================================
-   app/globals.css
-   Stylesheet global: import font, CSS variables, reset dasar,
-   dan kelas utilitas tambahan yang tidak tersedia di Tailwind.
-   ============================================================ */
-
-/* Import font dari Google Fonts:
-   - Playfair Display: font serif elegan untuk judul (berkesan akademis)
-   - Source Sans 3: font sans-serif bersih untuk teks body */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* === CSS VARIABLES (Token Desain) ===
-   Mendefinisikan variabel CSS di root agar bisa digunakan
-   di mana saja, termasuk di luar kelas Tailwind. */
 :root {
   --font-playfair: 'Playfair Display', Georgia, serif;
   --font-source-sans: 'Source Sans 3', system-ui, sans-serif;
-
-  /* Warna utama */
   --color-ocean-950: #0a2f2c;
   --color-ocean-900: #134e4a;
   --color-gold-400: #fbbf24;
 }
 
-/* === BASE STYLES ===
-   Mendefinisikan style dasar untuk elemen HTML */
 @layer base {
   html {
-    /* Scroll halus untuk anchor link (misal: #scope, #editors) */
     scroll-behavior: smooth;
   }
 
   body {
     font-family: var(--font-source-sans);
-    /* Latar belakang gelap bernuansa laut dalam */
     background-color: #0d1f1e;
     color: #e2e8f0;
-    /* Anti-aliasing agar teks tampil lebih tajam di semua layar */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #0f766e #0a2f2c;
   }
 
-  /* Terapkan font serif pada semua elemen dengan class .font-serif */
   .font-serif {
     font-family: var(--font-playfair);
   }
 
-  /* Heading secara default menggunakan font serif */
   h1, h2, h3, h4 {
     font-family: var(--font-playfair);
   }
+
+  /* Keyboard focus ring — visible only for keyboard/non-mouse users */
+  :focus-visible {
+    outline: 2px solid #14b8a6;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove default browser outline for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
 }
 
-/* === KOMPONEN KUSTOM ===
-   Kelas yang bisa dipakai ulang di banyak tempat */
 @layer components {
-  /* Kontainer halaman standar — membatasi lebar dan memberi padding */
   .page-container {
     @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12;
   }
 
-  /* Garis pemisah dengan gradien — lebih elegan dari border biasa */
   .divider-gradient {
     @apply h-px bg-gradient-to-r from-transparent via-ocean-700 to-transparent;
   }
+
+  /* Reusable input style for dark theme */
+  .input-dark {
+    @apply w-full px-3 py-2 bg-ocean-800 border border-ocean-700 rounded-lg text-white text-sm
+           placeholder-ocean-600 focus:outline-none focus:ring-2 focus:ring-ocean-500
+           focus:border-transparent transition-colors;
+  }
 }
 
-/* === ANIMASI KHUSUS ===
-   Animasi yang tidak bisa sepenuhnya dilakukan oleh Tailwind */
 @layer utilities {
-  /* Kelas untuk memotong teks panjang dengan ellipsis (...) */
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -87,7 +81,6 @@
     overflow: hidden;
   }
 
-  /* Prose styling untuk konten abstrak panjang */
   .prose-academic {
     @apply text-ocean-300 leading-relaxed text-base;
   }
@@ -97,17 +90,16 @@
   }
 }
 
-/* === SELECTION COLOR ===
-   Warna teks ketika pengguna men-select/highlight teks di halaman */
+/* Text selection */
 ::selection {
   background-color: rgba(20, 184, 166, 0.3);
   color: #ffffff;
 }
 
-/* === SCROLLBAR KUSTOM (Chrome, Edge, Safari) ===
-   Membuat scrollbar lebih tipis dan sesuai tema */
+/* Scrollbar — Chrome, Edge, Safari */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -121,4 +113,14 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #14b8a6;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
