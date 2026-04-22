@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import DeleteDraftButton from "@/components/dashboard/DeleteDraftButton"
 
 export const dynamic = "force-dynamic"
 export const metadata: Metadata = { title: "Artikel Saya" }
@@ -150,7 +151,7 @@ export default async function SubmissionsPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-1.5">
+                    <div className="flex items-center gap-1.5">
                       {canEdit && (
                         <Link
                           href={`/submit?id=${s.id}`}
@@ -179,6 +180,9 @@ export default async function SubmissionsPage() {
                         </svg>
                         Detail
                       </Link>
+                      {s.status === "DRAFT" && (
+                        <DeleteDraftButton id={s.id} title={s.title} />
+                      )}
                     </div>
                   </div>
                 </div>
