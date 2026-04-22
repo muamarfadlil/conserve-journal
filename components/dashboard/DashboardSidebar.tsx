@@ -14,11 +14,13 @@ type User = {
   avatarUrl?: string | null
 }
 
+/* In light mode the sidebar shifts to ocean-700→800 (lighter but still "navigation dark").
+   In dark mode it stays ocean-900→950 (deep ocean, current). */
 const ROLE_META: Record<string, { label: string; color: string; bg: string }> = {
-  SUPER_ADMIN: { label: "Super Admin", color: "text-red-400",    bg: "bg-red-900/30 border-red-800/60" },
-  ADMIN:       { label: "Admin",       color: "text-amber-400",  bg: "bg-amber-900/30 border-amber-800/60" },
-  REVIEWER:    { label: "Reviewer",    color: "text-blue-400",   bg: "bg-blue-900/30 border-blue-800/60" },
-  USER:        { label: "Penulis",     color: "text-ocean-400",  bg: "bg-ocean-900 border-ocean-700" },
+  SUPER_ADMIN: { label: "Super Admin", color: "text-red-300",   bg: "bg-red-900/40 border-red-800/60" },
+  ADMIN:       { label: "Admin",       color: "text-amber-300", bg: "bg-amber-900/40 border-amber-800/60" },
+  REVIEWER:    { label: "Reviewer",    color: "text-blue-300",  bg: "bg-blue-900/40 border-blue-800/60" },
+  USER:        { label: "Penulis",     color: "text-ocean-300", bg: "bg-ocean-700/40 border-ocean-700/60" },
 }
 
 function getInitials(name?: string | null) {
@@ -80,19 +82,21 @@ export default function DashboardSidebar({ user }: { user: User }) {
   ]
 
   return (
-    <aside className="w-60 flex-shrink-0 h-screen sticky top-0 flex flex-col
-                      bg-gradient-to-b from-ocean-900 to-ocean-950
-                      border-r border-ocean-800/70 overflow-hidden">
+    <aside className="w-60 flex-shrink-0 h-screen sticky top-0 flex flex-col overflow-hidden
+                      bg-gradient-to-b from-ocean-700 to-ocean-800
+                      dark:from-ocean-900 dark:to-ocean-950
+                      border-r border-ocean-600/50 dark:border-ocean-800/70">
 
       {/* Top gradient line */}
       <div className="absolute top-0 left-0 right-0 h-px
-                      bg-gradient-to-r from-transparent via-ocean-500/40 to-transparent" />
+                      bg-gradient-to-r from-transparent via-ocean-400/50 to-transparent
+                      dark:via-ocean-500/40" />
 
       {/* Logo */}
-      <div className="p-4 border-b border-ocean-800/60">
+      <div className="p-4 border-b border-ocean-600/50 dark:border-ocean-800/60">
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-8 h-8 rounded-full overflow-hidden bg-white
-                          ring-2 ring-ocean-700 group-hover:ring-ocean-500
+                          ring-2 ring-ocean-500/70 group-hover:ring-gold-400
                           flex-shrink-0 flex items-center justify-center p-0.5
                           transition-all duration-300">
             <Image src="/logo.png" alt="CONSERVE" width={32} height={32}
@@ -102,12 +106,11 @@ export default function DashboardSidebar({ user }: { user: User }) {
             <p className="font-serif font-bold text-white text-sm leading-none tracking-wide">
               CONSERVE
             </p>
-            <p className="text-ocean-600 text-[9px] leading-tight mt-0.5 uppercase tracking-widest">
+            <p className="text-ocean-300 text-[9px] leading-tight mt-0.5 uppercase tracking-widest">
               Dashboard
             </p>
           </div>
-          {/* External link hint */}
-          <svg className="w-3 h-3 text-ocean-700 group-hover:text-ocean-500 ml-auto
+          <svg className="w-3 h-3 text-ocean-400 group-hover:text-ocean-200 ml-auto
                           transition-colors duration-200"
                fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -117,12 +120,14 @@ export default function DashboardSidebar({ user }: { user: User }) {
       </div>
 
       {/* User card */}
-      <div className="p-3 border-b border-ocean-800/60">
+      <div className="p-3 border-b border-ocean-600/50 dark:border-ocean-800/60">
         <div className="flex items-center gap-2.5 px-2 py-2 rounded-lg
-                        bg-ocean-800/30 border border-ocean-800/40">
+                        bg-ocean-600/30 dark:bg-ocean-800/30
+                        border border-ocean-500/30 dark:border-ocean-800/40">
           <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center
                           text-xs font-bold text-white overflow-hidden
-                          bg-gradient-to-br from-ocean-500 to-ocean-700">
+                          bg-gradient-to-br from-ocean-400 to-ocean-600
+                          dark:from-ocean-500 dark:to-ocean-700">
             {user.avatarUrl
               // eslint-disable-next-line @next/next/no-img-element
               ? <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
@@ -148,8 +153,8 @@ export default function DashboardSidebar({ user }: { user: User }) {
           return (
             <div key={group.label ?? "main"} className="mb-1">
               {group.label && (
-                <p className="px-3 py-1.5 text-[9px] font-mono text-ocean-600
-                               uppercase tracking-widest select-none">
+                <p className="px-3 py-1.5 text-[9px] font-mono text-ocean-400
+                               dark:text-ocean-600 uppercase tracking-widest select-none">
                   {group.label}
                 </p>
               )}
@@ -164,22 +169,22 @@ export default function DashboardSidebar({ user }: { user: User }) {
                     className={`relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs
                                 font-medium transition-all duration-150 mb-0.5 group overflow-hidden
                                 ${isActive
-                                  ? "bg-gradient-to-r from-ocean-700/70 to-ocean-800/30 text-white"
-                                  : "text-ocean-400 hover:text-white hover:bg-ocean-800/60"
+                                  ? "bg-gradient-to-r from-ocean-500/40 to-ocean-600/20 dark:from-ocean-700/70 dark:to-ocean-800/30 text-white"
+                                  : "text-ocean-200 dark:text-ocean-400 hover:text-white hover:bg-ocean-600/40 dark:hover:bg-ocean-800/60"
                                 }`}
                   >
-                    {/* Left accent bar on active */}
                     {isActive && (
                       <span className="absolute left-0 top-1 bottom-1 w-0.5 rounded-r-full
-                                       bg-gradient-to-b from-ocean-400 to-ocean-600" />
+                                       bg-gradient-to-b from-ocean-200 to-ocean-400
+                                       dark:from-ocean-400 dark:to-ocean-600" />
                     )}
                     <span className={`flex-shrink-0 transition-colors duration-150
-                                      ${isActive ? "text-ocean-300" : "text-ocean-600 group-hover:text-ocean-400"}`}>
+                                      ${isActive ? "text-ocean-200 dark:text-ocean-300" : "text-ocean-400 group-hover:text-ocean-200"}`}>
                       {item.icon}
                     </span>
                     <span className="flex-1">{item.label}</span>
                     {isActive && (
-                      <span className="w-1 h-1 rounded-full bg-ocean-400 flex-shrink-0" />
+                      <span className="w-1 h-1 rounded-full bg-ocean-300 dark:bg-ocean-400 flex-shrink-0" />
                     )}
                   </Link>
                 )
@@ -190,11 +195,12 @@ export default function DashboardSidebar({ user }: { user: User }) {
       </nav>
 
       {/* Footer */}
-      <div className="p-2 border-t border-ocean-800/60 space-y-0.5">
+      <div className="p-2 border-t border-ocean-600/50 dark:border-ocean-800/60 space-y-0.5">
         <Link
           href="/"
           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs
-                     text-ocean-500 hover:text-white hover:bg-ocean-800/60 transition-all"
+                     text-ocean-300 dark:text-ocean-500
+                     hover:text-white hover:bg-ocean-600/40 dark:hover:bg-ocean-800/60 transition-all"
         >
           <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -205,7 +211,7 @@ export default function DashboardSidebar({ user }: { user: User }) {
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs
-                     text-red-500/80 hover:text-red-300 hover:bg-red-900/20 transition-all"
+                     text-red-300/80 hover:text-red-200 hover:bg-red-900/30 transition-all"
         >
           <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -215,9 +221,8 @@ export default function DashboardSidebar({ user }: { user: User }) {
         </button>
       </div>
 
-      {/* Bottom gradient fade */}
       <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none
-                      bg-gradient-to-t from-ocean-950/40 to-transparent" />
+                      bg-gradient-to-t from-ocean-800/30 dark:from-ocean-950/40 to-transparent" />
     </aside>
   )
 }

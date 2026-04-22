@@ -23,10 +23,8 @@ export default function DashboardShell({
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
-  // Close sidebar on route change
   useEffect(() => { setOpen(false) }, [pathname])
 
-  // Prevent body scroll when mobile sidebar is open
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden"
     else document.body.style.overflow = ""
@@ -34,16 +32,16 @@ export default function DashboardShell({
   }, [open])
 
   return (
-    <div className="flex min-h-screen bg-ocean-950">
+    <div className="flex min-h-screen bg-[var(--bg-base)]">
       {/* Mobile backdrop */}
       <div
         onClick={() => setOpen(false)}
-        className={`fixed inset-0 bg-black/60 z-40 lg:hidden transition-opacity duration-300
+        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300
                     ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         aria-hidden="true"
       />
 
-      {/* Sidebar — fixed on mobile, static on desktop */}
+      {/* Sidebar */}
       <div
         className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto flex-shrink-0
                     transform transition-transform duration-300 ease-in-out
@@ -54,15 +52,20 @@ export default function DashboardShell({
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
-        <header className="bg-gradient-to-r from-ocean-900/90 to-ocean-950/90 backdrop-blur-sm
-                           border-b border-ocean-800/70 px-4 sm:px-6 py-3
-                           flex items-center gap-3 sticky top-0 z-30">
+
+        {/* Topbar */}
+        <header className="sticky top-0 z-30 px-4 sm:px-6 py-3
+                           flex items-center gap-3
+                           bg-[var(--bg-surface-alt)] border-b border-[var(--border-default)]
+                           dark:bg-gradient-to-r dark:from-ocean-900/90 dark:to-ocean-950/90
+                           dark:backdrop-blur-sm dark:border-ocean-800/70">
           <button
             onClick={() => setOpen(true)}
-            className="lg:hidden p-2 rounded-lg text-ocean-400 hover:text-white
-                       hover:bg-ocean-800 transition-colors flex-shrink-0 focus-visible:outline-none
-                       focus-visible:ring-2 focus-visible:ring-ocean-500"
+            className="lg:hidden p-2 rounded-lg transition-colors flex-shrink-0
+                       text-[var(--text-muted)] hover:text-[var(--text-primary)]
+                       hover:bg-[var(--bg-surface)] border border-transparent
+                       hover:border-[var(--border-default)]
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-500"
             aria-label="Buka navigasi"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -71,13 +74,13 @@ export default function DashboardShell({
           </button>
 
           <div className="flex items-center justify-between flex-1 min-w-0">
-            <p className="text-ocean-500 text-sm flex items-center gap-1.5 truncate">
-              <span className="hidden sm:inline">Panel Pengelolaan</span>
-              <span className="text-ocean-700 hidden sm:inline">·</span>
-              <span className="text-white font-medium">CONSERVE Journal</span>
+            <p className="text-sm flex items-center gap-1.5 truncate">
+              <span className="hidden sm:inline text-[var(--text-muted)]">Panel Pengelolaan</span>
+              <span className="text-[var(--border-default)] hidden sm:inline">·</span>
+              <span className="text-[var(--text-primary)] font-medium">CONSERVE Journal</span>
             </p>
             <div className="flex items-center gap-3 flex-shrink-0">
-              <p className="text-ocean-600 text-xs hidden md:block">
+              <p className="text-[var(--text-muted)] text-xs hidden md:block">
                 {new Date().toLocaleDateString("id-ID", {
                   weekday: "long", day: "numeric", month: "long", year: "numeric",
                 })}
@@ -87,7 +90,7 @@ export default function DashboardShell({
           </div>
         </header>
 
-        <main id="main-content" className="flex-1 p-4 sm:p-6">
+        <main id="main-content" className="flex-1 p-4 sm:p-6 bg-[var(--bg-base)]">
           {children}
         </main>
       </div>

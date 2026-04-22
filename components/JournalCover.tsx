@@ -1,4 +1,3 @@
-// components/JournalCover.tsx
 import type { LatestIssue } from "@/lib/articles";
 
 interface JournalCoverProps {
@@ -9,20 +8,23 @@ export default function JournalCover({ issue }: JournalCoverProps) {
   const formattedDate = `${issue.month ?? ''} ${issue.year}`.trim()
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-ocean-950 via-ocean-900 to-ocean-800">
+    <section className="relative overflow-hidden
+                        bg-gradient-to-br from-ocean-800 via-ocean-700 to-ocean-600
+                        dark:from-ocean-950 dark:via-ocean-900 dark:to-ocean-800">
 
       {/* Ambient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full
-                        bg-ocean-600/15 blur-[80px]" />
+                        bg-ocean-400/20 dark:bg-ocean-600/15 blur-[80px]" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full
-                        bg-teal-500/10 blur-[60px]" />
+                        bg-teal-300/15 dark:bg-teal-500/10 blur-[60px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                        w-[600px] h-[300px] rounded-full bg-ocean-700/10 blur-[100px]" />
+                        w-[600px] h-[300px] rounded-full
+                        bg-ocean-500/10 dark:bg-ocean-700/10 blur-[100px]" />
         {/* Dot grid */}
         <div className="absolute inset-0"
              style={{
-               backgroundImage: `radial-gradient(circle, rgba(20,184,166,0.07) 1px, transparent 1px)`,
+               backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)`,
                backgroundSize: "32px 32px",
              }} />
       </div>
@@ -30,27 +32,28 @@ export default function JournalCover({ issue }: JournalCoverProps) {
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
 
-          {/* Kolom kiri */}
+          {/* Left column */}
           <div className="lg:col-span-3 space-y-6 animate-fade-up">
 
             <div className="inline-flex items-center gap-2 px-3 py-1.5
-                            bg-gradient-to-r from-ocean-800/80 to-ocean-700/60
-                            border border-ocean-600/60 rounded-full text-xs text-ocean-200
-                            backdrop-blur-sm shadow-sm shadow-ocean-950/40">
+                            bg-white/10 dark:bg-ocean-800/80
+                            border border-white/20 dark:border-ocean-600/60
+                            rounded-full text-xs text-white backdrop-blur-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse" />
               Edisi Terkini
-              <span className="text-ocean-500">·</span>
-              <span className="text-ocean-400 font-mono">{formattedDate}</span>
+              <span className="text-white/50">·</span>
+              <span className="text-white/80 font-mono">{formattedDate}</span>
             </div>
 
             <div>
               <h1 className="font-serif font-bold text-white leading-tight">
                 <span className="block text-5xl sm:text-6xl lg:text-7xl tracking-tight
-                                 bg-gradient-to-br from-white via-ocean-100 to-ocean-300
+                                 bg-gradient-to-br from-white via-ocean-100 to-ocean-200
+                                 dark:from-white dark:via-ocean-100 dark:to-ocean-300
                                  bg-clip-text text-transparent">
                   CONSERVE
                 </span>
-                <span className="block text-lg sm:text-xl font-normal text-ocean-400 mt-1
+                <span className="block text-lg sm:text-xl font-normal text-white/70 mt-1
                                  tracking-widest uppercase">
                   Journal of Community Services
                 </span>
@@ -64,82 +67,78 @@ export default function JournalCover({ issue }: JournalCoverProps) {
                 { label: "Terbit", value: formattedDate },
               ].map(({ label, value }) => (
                 <div key={label}
-                     className="bg-ocean-800/40 hover:bg-ocean-800/70 backdrop-blur-sm
-                                border border-ocean-700/60 hover:border-ocean-500
-                                rounded-lg px-4 py-2.5 transition-all duration-200 cursor-default">
-                  <p className="text-[10px] text-ocean-500 uppercase tracking-widest">{label}</p>
+                     className="bg-white/10 hover:bg-white/20 dark:bg-ocean-800/40 dark:hover:bg-ocean-800/70
+                                border border-white/20 dark:border-ocean-700/60
+                                hover:border-white/30 dark:hover:border-ocean-500
+                                rounded-lg px-4 py-2.5 transition-all duration-200 cursor-default
+                                backdrop-blur-sm">
+                  <p className="text-[10px] text-white/60 dark:text-ocean-400 uppercase tracking-widest">
+                    {label}
+                  </p>
                   <p className="text-sm font-semibold text-white mt-0.5">{value}</p>
                 </div>
               ))}
             </div>
 
-            <p className="text-ocean-300 text-sm leading-relaxed max-w-lg">
+            <p className="text-white/80 dark:text-ocean-300 text-sm leading-relaxed max-w-lg">
               Edisi ini memuat{" "}
-              <span className="text-gold-400 font-semibold">{issue.articles.length} artikel</span>
+              <span className="text-gold-300 dark:text-gold-400 font-semibold">{issue.articles.length} artikel</span>
               {" "}dari berbagai bidang pengabdian masyarakat dan konservasi lingkungan.
             </p>
 
-            <div className="flex items-center gap-3 text-ocean-500 text-sm">
+            <div className="flex items-center gap-3 text-white/50 text-sm">
               <div className="flex flex-col items-center gap-1">
-                <div className="w-px h-8 bg-gradient-to-b from-transparent via-ocean-600 to-ocean-500" />
-                <svg className="w-4 h-4 animate-bounce" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M19 9l-7 7-7-7" />
+                <div className="w-px h-8 bg-gradient-to-b from-transparent via-white/40 to-white/60" />
+                <svg className="w-4 h-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
-              <span className="text-ocean-500 text-xs">Gulir untuk melihat daftar artikel</span>
+              <span className="text-xs">Gulir untuk melihat daftar artikel</span>
             </div>
           </div>
 
-          {/* Kolom kanan: visual sampul */}
+          {/* Right column: journal cover visual */}
           <div className="lg:col-span-2 flex justify-center lg:justify-end animate-fade-up"
                style={{ animationDelay: "0.2s" }}>
             <div className="relative w-56 sm:w-64 group">
-              {/* Glow ambient di belakang buku */}
               <div className="absolute inset-0 translate-x-2 translate-y-2
-                              bg-ocean-500/20 blur-2xl rounded-lg
-                              group-hover:bg-ocean-400/30 transition-all duration-500" />
-              {/* Shadow card */}
+                              bg-ocean-300/20 dark:bg-ocean-500/20 blur-2xl rounded-lg
+                              group-hover:bg-ocean-200/30 dark:group-hover:bg-ocean-400/30
+                              transition-all duration-500" />
               <div className="absolute inset-0 translate-x-3 translate-y-3
-                              bg-ocean-900 rounded-lg border border-ocean-700/50" />
-              {/* Cover card */}
-              <div className="relative bg-gradient-to-b from-ocean-800 to-ocean-900
-                              rounded-lg border border-ocean-600/80 overflow-hidden
-                              shadow-2xl shadow-ocean-950/70 aspect-[3/4]
-                              group-hover:border-ocean-500 transition-all duration-300">
+                              bg-ocean-700 dark:bg-ocean-900 rounded-lg
+                              border border-ocean-600/50 dark:border-ocean-700/50" />
+              <div className="relative bg-gradient-to-b from-ocean-600 to-ocean-700
+                              dark:from-ocean-800 dark:to-ocean-900
+                              rounded-lg border border-ocean-400/80 dark:border-ocean-600/80
+                              overflow-hidden shadow-2xl aspect-[3/4]
+                              group-hover:border-ocean-300 dark:group-hover:border-ocean-500
+                              transition-all duration-300">
 
-                <div className="h-2/3 bg-gradient-to-br from-ocean-600 via-ocean-700 to-ocean-900
-                                relative overflow-hidden">
-                  {/* Shimmer overlay on hover */}
+                <div className="h-2/3 bg-gradient-to-br from-ocean-500 via-ocean-600 to-ocean-700
+                                dark:from-ocean-600 dark:via-ocean-700 dark:to-ocean-900 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent
                                   -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                   <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 200 200"
                        preserveAspectRatio="xMidYMid slice">
-                    <path d="M0 100 Q50 50 100 100 T200 100 V200 H0Z"
-                          fill="rgba(255,255,255,0.1)" />
-                    <path d="M0 120 Q50 70 100 120 T200 120 V200 H0Z"
-                          fill="rgba(255,255,255,0.08)" />
-                    <path d="M0 140 Q50 90 100 140 T200 140 V200 H0Z"
-                          fill="rgba(255,255,255,0.06)" />
+                    <path d="M0 100 Q50 50 100 100 T200 100 V200 H0Z" fill="rgba(255,255,255,0.1)" />
+                    <path d="M0 120 Q50 70 100 120 T200 120 V200 H0Z" fill="rgba(255,255,255,0.08)" />
+                    <path d="M0 140 Q50 90 100 140 T200 140 V200 H0Z" fill="rgba(255,255,255,0.06)" />
                     <ellipse cx="100" cy="80" rx="50" ry="25" fill="rgba(255,255,255,0.06)" />
-                    <path d="M60 80 Q100 55 140 80" stroke="rgba(255,255,255,0.12)"
-                          strokeWidth="2" fill="none" />
+                    <path d="M60 80 Q100 55 140 80" stroke="rgba(255,255,255,0.12)" strokeWidth="2" fill="none" />
                   </svg>
                   <div className="absolute top-3 left-3 right-3">
-                    <p className="text-[8px] font-mono text-ocean-300 tracking-widest uppercase">
+                    <p className="text-[8px] font-mono text-white/70 tracking-widest uppercase">
                       Volume {issue.volume} · Number {issue.issue}
                     </p>
                   </div>
                 </div>
 
-                <div className="h-1/3 p-3 bg-ocean-950 flex flex-col justify-center">
+                <div className="h-1/3 p-3 bg-ocean-700 dark:bg-ocean-950 flex flex-col justify-center">
                   <p className="font-serif font-bold text-white text-sm leading-tight">CONSERVE</p>
-                  <p className="text-[9px] text-ocean-400 leading-tight mt-0.5">
-                    Journal of Community Services
-                  </p>
+                  <p className="text-[9px] text-white/60 leading-tight mt-0.5">Journal of Community Services</p>
                   <div className="mt-2 h-px bg-gradient-to-r from-gold-500 via-gold-400 to-transparent" />
-                  <p className="text-[8px] text-ocean-500 mt-1.5">{formattedDate}</p>
+                  <p className="text-[8px] text-white/40 mt-1.5">{formattedDate}</p>
                 </div>
               </div>
             </div>
@@ -148,9 +147,9 @@ export default function JournalCover({ issue }: JournalCoverProps) {
         </div>
       </div>
 
-      {/* Bottom fade ke section berikutnya */}
+      {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-20
-                      bg-gradient-to-b from-transparent to-ocean-950" />
+                      bg-gradient-to-b from-transparent to-[var(--bg-base)]" />
     </section>
   )
 }
