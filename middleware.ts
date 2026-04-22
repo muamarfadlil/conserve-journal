@@ -20,7 +20,7 @@ export default withAuth(
     }
 
     if (
-      (pathname.startsWith("/dashboard/reviewer") || pathname.startsWith("/reviewer/")) &&
+      pathname.startsWith("/dashboard/reviewer") &&
       role !== "REVIEWER" && role !== "ADMIN" && role !== "SUPER_ADMIN"
     ) {
       return NextResponse.redirect(new URL("/dashboard?error=forbidden", req.url))
