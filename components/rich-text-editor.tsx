@@ -89,13 +89,26 @@ export default function RichTextEditor({
   }, [editor])
 
   const handleAddComment = useCallback(() => {
-    if (!editor || !onAddComment) return
+    if (!onAddComment) return
+
+    if (readonly) {
+      // In readonly mode Tiptap sets contenteditable=false so editor.state.selection
+      // does NOT track the user's DOM text selection. Use the browser native API instead.
+      const sel = window.getSelection()
+      const text = sel?.toString().trim()
+      if (!text) return
+      onAddComment(text, 0, 0)
+      sel?.removeAllRanges()
+      return
+    }
+
+    if (!editor) return
     const { from, to } = editor.state.selection
     if (from === to) return
     const text = editor.state.doc.textBetween(from, to)
     editor.chain().focus().setHighlight({ color: "#fbbf2440" }).run()
     onAddComment(text, from, to)
-  }, [editor, onAddComment])
+  }, [editor, readonly, onAddComment])
 
   if (!editor) return null
 
@@ -216,12 +229,21 @@ export default function RichTextEditor({
       {readonly && onAddComment && (
         <div className="flex items-center gap-2 px-3 py-1.5
                         bg-[var(--bg-surface)] border-b border-[var(--border-default)]">
-          <span className="text-[10px] text-[var(--text-muted)]">Blok teks lalu klik</span>
-          <button type="button" onClick={handleAddComment}
+          <svg className="w-3 h-3 text-[var(--text-muted)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-[10px] text-[var(--text-muted)] flex-1">
+            Pilih teks lalu klik untuk menambah komentar
+          </span>
+          {/* onMouseDown + preventDefault keeps the text selection alive when button is clicked */}
+          <button
+            type="button"
+            onMouseDown={(e) => { e.preventDefault(); handleAddComment() }}
             className="inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded-lg
                        bg-gold-500/10 border border-gold-500/30 text-gold-600 dark:text-gold-400
-                       hover:bg-gold-500/20 transition-colors">
-            💬 Tambah Komentar
+                       hover:bg-gold-500/20 transition-colors flex-shrink-0">
+            💬 Komentar
           </button>
         </div>
       )}

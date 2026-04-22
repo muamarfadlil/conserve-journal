@@ -4,6 +4,7 @@ export interface ArticleComment {
   comment: string
   reviewerName: string
   paragraphIndex: number
+  section?: string        // e.g. "Abstrak", "Pendahuluan", "Metodologi", …
   createdAt: number
 }
 
