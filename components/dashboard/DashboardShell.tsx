@@ -53,8 +53,9 @@ export default function DashboardShell({
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="bg-ocean-900/80 backdrop-blur-sm border-b border-ocean-800
-                           px-4 sm:px-6 py-3 flex items-center gap-3 sticky top-0 z-30">
+        <header className="bg-gradient-to-r from-ocean-900/90 to-ocean-950/90 backdrop-blur-sm
+                           border-b border-ocean-800/70 px-4 sm:px-6 py-3
+                           flex items-center gap-3 sticky top-0 z-30">
           <button
             onClick={() => setOpen(true)}
             className="lg:hidden p-2 rounded-lg text-ocean-400 hover:text-white

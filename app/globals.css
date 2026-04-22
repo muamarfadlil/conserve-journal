@@ -115,6 +115,14 @@
   background: #14b8a6;
 }
 
+/* Auth card input glow on focus */
+.input-auth {
+  @apply w-full px-4 py-2.5 bg-ocean-800/80 border border-ocean-700/60 rounded-lg
+         text-white placeholder-ocean-600 text-sm
+         focus:outline-none focus:ring-2 focus:ring-ocean-500/60 focus:border-ocean-500/40
+         focus:bg-ocean-800 transition-all duration-200;
+}
+
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
