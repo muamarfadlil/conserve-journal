@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import JournalSidebar from "@/components/JournalSidebar";
 
 export const metadata: Metadata = {
   title: "Tentang Jurnal",
@@ -25,40 +26,6 @@ const scopeTopics = [
   { icon: "💼", title: "Ekonomi Kreatif & UMKM", desc: "Pendampingan usaha berbasis produk laut, pemasaran digital, akses permodalan, dan rantai nilai lokal." },
 ];
 
-const sidebarLinks = [
-  { label: "Focus and Scope", href: "#scope" },
-  { label: "Publication Ethics", href: "#ethics" },
-  { label: "Article Processing Fee", href: "#apf" },
-  { label: "Peer Reviewers Process", href: "#review-process" },
-  { label: "Peer Reviewers", href: "#editors" },
-  { label: "Open Access Statement", href: "#open-access" },
-  { label: "Plagiarism", href: "#plagiarism" },
-  { label: "Copyright Notice", href: "#copyright" },
-  { label: "Contact", href: "#contact" },
-  { label: "Article Withdrawal", href: "#withdrawal" },
-];
-
-function JournalSidebar() {
-  return (
-    <aside className="w-full lg:w-64 flex-shrink-0">
-      <div className="sticky top-24 rounded-xl overflow-hidden border border-[var(--border-default)]
-                      bg-[var(--bg-surface)]">
-        {sidebarLinks.map((link, i) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className={`block px-4 py-3 text-sm text-[var(--text-secondary)]
-                        hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-alt)]
-                        transition-colors duration-150
-                        ${i > 0 ? "border-t border-[var(--border-default)]" : ""}`}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
-    </aside>
-  );
-}
 
 export default function AboutPage() {
   return (
