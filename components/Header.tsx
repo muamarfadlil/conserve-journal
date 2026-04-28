@@ -65,6 +65,16 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b shadow-sm transition-colors duration-200
                        bg-[var(--bg-header)] border-[var(--border-default)]">
+
+      {/* ISSN strip */}
+      <div className="hidden sm:flex justify-end items-center px-4 sm:px-6 lg:px-8 py-1
+                      border-b border-[var(--border-default)] bg-[var(--bg-surface-alt)]">
+        <p className="text-[11px] font-mono text-[var(--text-muted)] tracking-wide">
+          <span className="mr-4">Online ISSN : 0000-0000</span>
+          <span>Print ISSN : 0000-0001</span>
+        </p>
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
